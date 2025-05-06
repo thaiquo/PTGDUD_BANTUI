@@ -1,0 +1,360 @@
+{
+
+    "users": [{
+        "id": "8739",
+        "username": "tanthinh",
+        "email": "thinh@gmail.com",
+        "password": "123",
+        "roles": [
+            "user"
+        ]
+    }],
+    "register": [],
+    "login": [],
+    "menu": [{
+            "title": "Trang chủ",
+            "link": "/"
+        },
+        {
+            "title": "Sản Phẩm",
+            "submenu": [{
+                    "category": "LOẠI TÚI",
+                    "items": ["Túi xách tay", "Túi đeo chéo", "Túi đeo vai", "Túi mini", "Túi tote"]
+                },
+                {
+                    "category": "CHẤT LIỆU",
+                    "items": ["Da tổng hợp", "Vải canvas", "Da lộn", "Nhựa trong suốt"]
+                },
+                {
+                    "category": "PHONG CÁCH",
+                    "items": ["Công sở", "Dạo phố", "Dự tiệc", "Du lịch"]
+                }
+            ]
+        },
+        {
+            "title": "Sale",
+            "link": "/sale"
+        },
+        {
+            "title": "Hỗ trợ",
+            "link": "/support"
+        }
+    ],
+    "banner": [{
+            "id": 1,
+            "imageUrl": "https://scontent.fsgn19-1.fna.fbcdn.net/v/t39.30808-6/490304145_1114739197362563_8865256658645798956_n.jpg?_nc_cat=108&ccb=1-7&_nc_sid=cc71e4&_nc_eui2=AeGUycnN0bqDdkx-nepytbFVfsmPaZzSe0V-yY9pnNJ7RedUNzK3YmAqF1rDOAwtdpc2PalVu7_LHi645BeK9oRi&_nc_ohc=jgFmTYkNQAUQ7kNvwGymf9F&_nc_oc=Adlea4Rai3iA43d10Ah1kogdYHSwsQtYcKlFtf0PuNAr2D5RX3wVwx2DUv5rx3ZC6S3BaCDnbyi-8emSduKCVMGj&_nc_zt=23&_nc_ht=scontent.fsgn19-1.fna&_nc_gid=o4vTiVe5M1IBKWVL6C3WRQ&oh=00_AfHFAFjtoayHjsvHG1x4PKW4duXHFB71jo-BGvOLofSeaA&oe=681EDECB",
+            "alt": "Slide 1"
+        },
+        {
+            "id": 2,
+            "imageUrl": "https://file.hstatic.net/1000003969/file/6_33fab3d9c3c94019a9a58fbecfc52aba.jpg",
+            "alt": "Slide 2"
+        },
+        {
+            "id": 3,
+            "imageUrl": "https://file.hstatic.net/1000003969/file/700x400-jn-sale_a3cdbbe8ffbb481fb97493b4f89aef2c.jpg",
+            "alt": "Slide 3"
+        }
+    ],
+    "sanpham": [{
+            "id": 1,
+            "tenSanPham": "Túi Xách Nhỏ Rút May Chỉ Hoạ Tiết Quả Trám",
+            "trangThai": 0,
+            "moTa": "Túi Xách Nhỏ Rút May Chỉ Hoạ Tiết Quả Trám thời trang, hiện đại Túi thiết kế dáng nhỏ, bề mặt may chỉ họa tiết quả trám đẹp mắt, phối quai dây rút miếng túi sành điệu. Chất liệu da tổng hợp cao cấp, phù hợp mang nhiều dịp: đi làm, dạo phố, dự tiệc. Túi có 3 màu cho nàng lựa chọn, dễ phối đồ.",
+            "chatLieu": "Da tổng hợp",
+            "kichThuoc": "25cmx17cmx8cm",
+            "xuatxu": "Trung Quốc",
+            "loai": "Túi xách tay",
+            "phongCach": "Dự tiệc",
+            "giaTien": "849,000₫",
+            "mauSac": [{
+                "id": 1,
+                "mau": "Kem-Nâu",
+                "hinhAnh": [{
+                    "id": 1,
+                    "img": "https://product.hstatic.net/1000003969/product/nau-anh-kim_txn901_9_20250418152127_e4f6af20b950459ab70c5b6b03c02681_master.jpeg"
+                }, {
+                    "id": 2,
+                    "img": "https://product.hstatic.net/1000003969/product/nau-anh-kim_txn901_20_20250421191918_0d19c35c8a524125885395d781570f49_master.jpeg"
+                }, {
+                    "id": 3,
+                    "img": "https://product.hstatic.net/1000003969/product/nau-anh-kim_txn901_21_20250421191918_de0703bf37e84f66bb49fb09076a2b3f_master.jpeg"
+                }, {
+                    "id": 4,
+                    "img": "https://product.hstatic.net/1000003969/product/nau-anh-kim_txn901_24_20250421191918_98bd66e9baa24153923d8d8a883b01a2_master.jpeg"
+                }]
+            }, {
+
+                "id": 2,
+                "mau": "kim-Đen",
+                "hinhAnh": [{
+                    "id": 1,
+                    "img": "https://product.hstatic.net/1000003969/product/den_txn901_5_20250418152126_bebd95badc2a43a786f2e9a3243b134e_master.jpeg"
+                }, {
+                    "id": 2,
+                    "img": "https://product.hstatic.net/1000003969/product/den_txn901_12_20250421191918_8fdcce8ed34b4b1292bf8991c73cf860_master.jpeg"
+                }, {
+                    "id": 3,
+                    "img": "https://product.hstatic.net/1000003969/product/den_txn901_14_20250421191918_962f093b8c654273ba0200b5f9aed195_master.jpeg"
+                }, {
+                    "id": 4,
+                    "img": "https://product.hstatic.net/1000003969/product/den_txn901_15_20250421191918_f92688a965364c8fbe809f6ab5af6830_master.jpeg"
+                }]
+            }]
+        }, {
+            "id": 2,
+            "tenSanPham": "Túi Tote Chần Bông",
+            "trangThai": 0,
+            "moTa": "Túi Tote Chần Bông thời kế hiện đại, sành điệu Túi thiết kế bề mặt chần bông cứng cáp, chất lệu trượt nước giúp bạn thoải mái sử dụng không lo túi bị thấm nước Khoang túi bên trong rộng rãi, có ngăn nhỏ khóa kéo giúp việc sắp xếp ngăn nắp, tiện dụng Chất liệu dù tổng hợp cao cấp bền đẹp.",
+            "chatLieu": "Vải canvas",
+            "kichThuoc": "25cmx17cmx8cm",
+            "xuatxu": "Trung Quốc",
+            "loai": "Túi tote",
+            "phongCach": "Công sở",
+            "giaTien": "599,000₫",
+            "mauSac": [{
+                "id": 1,
+                "mau": "Xám",
+                "hinhAnh": [{
+                    "id": 1,
+                    "img": "https://product.hstatic.net/1000003969/product/xam_txl107_1_20250324162126_0d03137cb06b49dcbd6f8caa5787bc9b_master.jpeg"
+                }, {
+                    "id": 2,
+                    "img": "https://product.hstatic.net/1000003969/product/xam_txl107_2_20250324162126_94437306959546d8a85cd6579d86c48e_master.jpeg"
+                }, {
+                    "id": 3,
+                    "img": "https://product.hstatic.net/1000003969/product/xam_txl107_3_20250324162126_d47964026b0741fd825b0992e80be902_master.jpeg"
+                }, {
+                    "id": 4,
+                    "img": "https://product.hstatic.net/1000003969/product/xam_txl107_6_20250324162127_542e7566fe324a79b27eabdcf28a5388_master.jpeg"
+                }]
+            }, {
+
+                "id": 2,
+                "mau": "Đen",
+                "hinhAnh": [{
+                    "id": 1,
+                    "img": "https://product.hstatic.net/1000003969/product/den_txl107_7_20250324162127_9ecf699e823247fbb410995c4296f797_master.jpeg"
+                }, {
+                    "id": 2,
+                    "img": "https://product.hstatic.net/1000003969/product/den_txl107_8_20250324162127_2847a6d4b3964bf6b4d3ac310edcc144_master.jpeg"
+                }, {
+                    "id": 3,
+                    "img": "https://product.hstatic.net/1000003969/product/den_txl107_9_20250324162127_a10bd19158b34f2c9902670e4f1dc1dd_master.jpeg"
+                }, {
+                    "id": 4,
+                    "img": "https://product.hstatic.net/1000003969/product/den_txl107_12_20250324162127_203988bba2d54ba684e89033c8789cb6_master.jpeg"
+                }]
+            }]
+        }, {
+            "id": 3,
+            "tenSanPham": "Túi Xách Nhỏ Form Chữ Nhật Phối Charm",
+            "trangThai": 0,
+            "moTa": "Túi Xách Nhỏ Form Chữ Nhật Phối Charm thời trang, hiện đại Form túi mới lạ bo góc, quai cầm tay mang lại phong cách trẻ trung, nữ tính khi diện Túi có khóa kéo kim loại và kết hợp dây đi kèm cho nàng dễ dàng thay đổi Thích hợp với nhiều mục đích sử dụng: đi chơi, đi học, dạo phố,...",
+            "chatLieu": "Da lộn",
+            "kichThuoc": "220cmx11cmx8cm",
+            "xuatxu": "Trung Quốc",
+            "loai": "Túi mini",
+            "phongCach": "Du lịch",
+            "giaTien": "749,000₫",
+            "mauSac": [{
+                "id": 1,
+                "mau": "Kem",
+                "hinhAnh": [{
+                    "id": 1,
+                    "img": "https://product.hstatic.net/1000003969/product/kem_txn880_9_20250210164515_97b39e0b0f884f738a68891d36f7be14_master.jpeg"
+                }, {
+                    "id": 2,
+                    "img": "https://product.hstatic.net/1000003969/product/kem_txn880_12_20250210164515_c52957592f1c4d37a33f84dfa7220fa9_master.jpeg"
+                }, {
+                    "id": 3,
+                    "img": "https://product.hstatic.net/1000003969/product/kem_txn880_14_20250210164515_36d5b610b0f549c8a10238495149bab2_master.jpeg"
+                }, {
+                    "id": 4,
+                    "img": "https://product.hstatic.net/1000003969/product/kem_txn880_16_20250210164515_368776016e444739b7a0abaf6efa13b2_master.jpeg"
+                }]
+            }, {
+
+                "id": 2,
+                "mau": "Đen",
+                "hinhAnh": [{
+                    "id": 1,
+                    "img": "https://product.hstatic.net/1000003969/product/den_txn880_17_20250210164515_a8b88e0274d2464ab96a946b6d1b8c11_master.jpeg"
+                }, {
+                    "id": 2,
+                    "img": "https://product.hstatic.net/1000003969/product/den_txn880_20_20250210164516_1ae5bda2f54144d1acef6d723353fb83_master.jpeg"
+                }, {
+                    "id": 3,
+                    "img": "https://product.hstatic.net/1000003969/product/den_txn880_22_20250210164516_998cfe7a3fb14c0395fb3de4aade7113_master.jpeg"
+                }, {
+                    "id": 4,
+                    "img": "https://product.hstatic.net/1000003969/product/den_txn880_24_20250210164516_5a2cfd49869d47b4aeb156f1e28f4a7e_master.jpeg"
+                }]
+            }]
+        },
+        {
+            "id": 4,
+            "tenSanPham": "Túi Xách Nhỏ Đeo Vai Phối Khoá Xoay Trang Trí",
+            "trangThai": 0,
+            "moTa": "Túi Xách Nhỏ Đeo Vai Phối Khoá Xoay Trang Trí thời trang ứng dụng được nhiều dịp Thiết kế kiểu dáng cứng cáp, khóa kim loại nổi bật, dây đeo cho bạn diện nhiều kiểu khác nhau Có 03 sự lựa chọn về màu sắc để nàng thoải mái phối đồ và tạo phong cách mới Chất liệu da tổng hợp bền đẹp, dễ dàng vệ sinh",
+            "chatLieu": "Da tổng hợp",
+            "kichThuoc": "21cmx10cmx4cm",
+            "xuatxu": "Trung Quốc",
+            "loai": "Túi đeo vai",
+            "phongCach": "Dạo phố",
+            "giaTien": "849,000₫",
+            "mauSac": [{
+                "id": 1,
+                "mau": "Nâu",
+                "hinhAnh": [{
+                    "id": 1,
+                    "img": "https://product.hstatic.net/1000003969/product/nau_txn874_1_20241216160558_ff49a8fe76db4e8ba68ba820eaa6652e_master.jpeg"
+                }, {
+                    "id": 2,
+                    "img": "https://product.hstatic.net/1000003969/product/nau_txn874_2_20241216160558_e270534d9208460ea0a38ded4d8516b7_master.jpeg"
+                }, {
+                    "id": 3,
+                    "img": "https://product.hstatic.net/1000003969/product/nau_txn874_4_20241216160558_97f3f25aa1784143902960c08a744cc5_master.jpeg"
+                }, {
+                    "id": 4,
+                    "img": "https://product.hstatic.net/1000003969/product/nau_txn874_6_20241216160558_cdb25a51afca4ef0a003d00d213cc0bb_master.jpeg"
+                }]
+            }]
+        }, {
+            "id": 5,
+            "tenSanPham": "Túi Xách Lớn Túi Xách Lớn Đeo Vai Form Mềm",
+            "trangThai": 0,
+            "moTa": "Túi Xách Lớn Túi Xách Lớn Đeo Vai Form Mềm kiểu dáng mới lạ, sành điệu Túi thiết kế quai đeo dài to dễ dàng điều chỉnh, chất liệu mềm mang lại nét nổi bật khi diện Khoang túi bên trong rộng rãi, có nhiều ngăn nhỏ giúp việc sắp xếp ngăn nắp, tiện dụng Chất liệu da tổng hợp cao cấp bền đẹp.",
+            "chatLieu": "Da tổng hợp",
+            "kichThuoc": "33cmx26cmx11cm",
+            "xuatxu": "Trung Quốc",
+            "loai": "Túi xách tay",
+            "phongCach": "Dự tiệc",
+            "giaTien": "849,000₫",
+            "mauSac": [{
+                "id": 1,
+                "mau": "Đỏ",
+                "hinhAnh": [{
+                    "id": 1,
+                    "img": "https://product.hstatic.net/1000003969/product/do_txl103_1_20250422134004_4af1b09e3d834a4ea27c051af53ba3a9_master.jpeg"
+                }, {
+                    "id": 2,
+                    "img": "https://product.hstatic.net/1000003969/product/do_txl103_2_20250422134005_12dafc97e78648218d4a539cc36a3a06_master.jpeg"
+                }, {
+                    "id": 3,
+                    "img": "https://product.hstatic.net/1000003969/product/do_txl103_4_20250422134005_3225e29df3774abbb394697b64d7d294_master.jpeg"
+                }, {
+                    "id": 4,
+                    "img": "https://product.hstatic.net/1000003969/product/do_txl103_6_20250422134005_517cf9da0f8b4086a4ef100f45b6479e_master.jpeg"
+                }]
+            }, {
+
+                "id": 2,
+                "mau": "Đen",
+                "hinhAnh": [{
+                    "id": 1,
+                    "img": "https://product.hstatic.net/1000003969/product/den_txl103_19_20250422134005_0d9886557c5343d3ae71e90cfa31ec2d_master.jpeg"
+                }, {
+                    "id": 2,
+                    "img": "https://product.hstatic.net/1000003969/product/den_txl103_20_20250422134005_ae5ba434b36a49b0afcafd5e2c1f2bcf_master.jpeg"
+                }, {
+                    "id": 3,
+                    "img": "https://product.hstatic.net/1000003969/product/den_txl103_22_20250422134005_9d2cefb56d414589a5cae304284d242b_master.jpeg"
+                }, {
+                    "id": 4,
+                    "img": "https://product.hstatic.net/1000003969/product/den_txl103_24_20250422134005_6d2150f2a74b4173a648e251a867d098_master.jpeg"
+                }]
+            }]
+        }, {
+            "id": 6,
+            "tenSanPham": "Túi Xách Nhỏ Hobo Half Moon",
+            "trangThai": 0,
+            "moTa": "Túi Xách Nhỏ Hobo Half Moon sành điệu Form bo tròn góc phối tay cầm mới lạ, trẻ trung Túi có dây đeo có thể đeo nhiều kiểu, phù hợp với nhiều phong cách Chất liệu da tổng hợp dễ bảo quản Màu sắc dễ phối đồ cho nàng thêm sự lựa chọn",
+            "chatLieu": "Da lộn",
+            "kichThuoc": "20cmx17cmx6cm",
+            "xuatxu": "Trung Quốc",
+            "loai": "Túi mini",
+            "phongCach": "Dạo Phố",
+            "giaTien": "749,000₫",
+            "mauSac": [{
+                "id": 1,
+                "mau": "Kem",
+                "hinhAnh": [{
+                    "id": 1,
+                    "img": "https://product.hstatic.net/1000003969/product/kem_txn884_1_20250303144444_cb964f8f189a43e3aea16f67d6c984bc_master.jpeg"
+                }, {
+                    "id": 2,
+                    "img": "https://product.hstatic.net/1000003969/product/kem_txn884_4_20250303144444_8c6c777163f046d680367b5ce4adf407_master.jpeg"
+                }, {
+                    "id": 3,
+                    "img": "https://product.hstatic.net/1000003969/product/kem_txn884_3_20250303144444_3b053d267a454e64ab5398ecde1b1c4d_master.jpeg"
+                }, {
+                    "id": 4,
+                    "img": "https://product.hstatic.net/1000003969/product/kem_txn884_6_20250303144444_00972f820a054f3697b2e50b31035f41_master.jpeg"
+                }]
+            }, {
+
+                "id": 2,
+                "mau": "Xanh",
+                "hinhAnh": [{
+                    "id": 1,
+                    "img": "https://product.hstatic.net/1000003969/product/xanh_txn884_7_20250303144444_a34f53d8108a4fbea6105bb723f8ef0f_master.jpeg"
+                }, {
+                    "id": 2,
+                    "img": "https://product.hstatic.net/1000003969/product/xanh_txn884_8_20250303144444_ca213bba9a8e400793f14aae1002006e_master.jpeg"
+                }, {
+                    "id": 3,
+                    "img": "https://product.hstatic.net/1000003969/product/xanh_txn884_9_20250303144444_ecf7bb41f64f485fb5bd09691d66a3c7_master.jpeg"
+                }, {
+                    "id": 4,
+                    "img": "https://product.hstatic.net/1000003969/product/xanh_txn884_12_20250303144444_64474ee9d3e44c4dac4a6120ce6079ab_master.jpeg"
+                }]
+            }]
+        }, {
+            "id": 7,
+            "tenSanPham": "Túi Xách Nhỏ Tay Cầm Xoắn Phối Charm Trang Trí",
+            "trangThai": 1,
+            "moTa": "Túi Xách Nhỏ Tay Cầm Xoắn Phối Charm Trang Trí với thiết kế tay cầm khối chất liệu da xoắn Thiết kế khóa kim loại gài tiện dụng, bên trong có 01 ngăn lớn dễ dàng mang nhiều vật dụng cần thiết Chất liệu da mềm hiệu ứng Hologram lạ mắt giúp tạo điểm nhấn cho outfit của bạn",
+            "chatLieu": "Da lộn",
+            "kichThuoc": "22cmx14cmx6cm",
+            "xuatxu": "Trung Quốc",
+            "loai": "Túi mini",
+            "phongCach": "Công sở",
+            "giaTien": "949,000₫",
+            "mauSac": [{
+                "id": 1,
+                "mau": "Kem",
+                "hinhAnh": [{
+                    "id": 1,
+                    "img": "https://product.hstatic.net/1000003969/product/kem_txn884_1_20250303144444_cb964f8f189a43e3aea16f67d6c984bc_master.jpeg"
+                }, {
+                    "id": 2,
+                    "img": "https://product.hstatic.net/1000003969/product/kem_txn884_4_20250303144444_8c6c777163f046d680367b5ce4adf407_master.jpeg"
+                }, {
+                    "id": 3,
+                    "img": "https://product.hstatic.net/1000003969/product/kem_txn884_3_20250303144444_3b053d267a454e64ab5398ecde1b1c4d_master.jpeg"
+                }, {
+                    "id": 4,
+                    "img": "https://product.hstatic.net/1000003969/product/kem_txn884_6_20250303144444_00972f820a054f3697b2e50b31035f41_master.jpeg"
+                }]
+            }, {
+
+                "id": 2,
+                "mau": "Xanh",
+                "hinhAnh": [{
+                    "id": 1,
+                    "img": "https://product.hstatic.net/1000003969/product/xanh_txn884_7_20250303144444_a34f53d8108a4fbea6105bb723f8ef0f_master.jpeg"
+                }, {
+                    "id": 2,
+                    "img": "https://product.hstatic.net/1000003969/product/xanh_txn884_8_20250303144444_ca213bba9a8e400793f14aae1002006e_master.jpeg"
+                }, {
+                    "id": 3,
+                    "img": "https://product.hstatic.net/1000003969/product/xanh_txn884_9_20250303144444_ecf7bb41f64f485fb5bd09691d66a3c7_master.jpeg"
+                }, {
+                    "id": 4,
+                    "img": "https://product.hstatic.net/1000003969/product/xanh_txn884_12_20250303144444_64474ee9d3e44c4dac4a6120ce6079ab_master.jpeg"
+                }]
+            }]
+        }
+    ]
+}
