@@ -1,0 +1,15 @@
+{
+  "users": [
+    {
+      "id": "8739",
+      "username": "tanthinh",
+      "email": "thinh@gmail.com",
+      "password": "123",
+      "roles": [
+        "user"
+      ]
+    }
+  ],
+  "register": [],
+  "login": []
+}
