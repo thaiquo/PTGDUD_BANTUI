@@ -1,49 +1,81 @@
-import { useState, useEffect } from "react";
-import {
-  MagnifyingGlassIcon,
-  ShoppingBagIcon,
-  UserIcon,
-} from "@heroicons/react/24/outline";
-import menuData from "../../data/menu.json";
-import logo from "../assets/Logo.jpg";
-import { Link, useNavigate } from "react-router-dom";
+"use client"
+
+import { useState, useEffect } from "react"
+import { MagnifyingGlassIcon, ShoppingBagIcon, UserIcon } from "@heroicons/react/24/outline"
+import menuData from "../../data/menu.json"
+import logo from "../assets/Logo.jpg"
+import { Link, useNavigate } from "react-router-dom"
 
 const Navbar = () => {
-  const [activeIndex, setActiveIndex] = useState(null);
-  const navigate = useNavigate();
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userData, setUserData] = useState(null);
+  const [activeIndex, setActiveIndex] = useState(null)
+  const navigate = useNavigate()
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [userData, setUserData] = useState(null)
+  const [cartCount, setCartCount] = useState(0)
 
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
+    const storedUser = localStorage.getItem("user")
     if (storedUser) {
-      setIsLoggedIn(true);
-      setUserData(JSON.parse(storedUser));
+      setIsLoggedIn(true)
+      setUserData(JSON.parse(storedUser))
     } else {
-      setIsLoggedIn(false);
-      setUserData(null);
+      setIsLoggedIn(false)
+      setUserData(null)
     }
-  }, []);
+
+    // Lấy số lượng sản phẩm trong giỏ hàng từ localStorage
+    const updateCartCount = () => {
+      try {
+        const cart = JSON.parse(localStorage.getItem("cart") || "[]")
+        const count = cart.reduce((total, item) => total + item.soLuong, 0)
+        setCartCount(count)
+      } catch (error) {
+        console.error("Lỗi khi đọc giỏ hàng:", error)
+        setCartCount(0)
+      }
+    }
+
+    updateCartCount()
+
+    // Lắng nghe sự kiện storage để cập nhật số lượng giỏ hàng khi có thay đổi
+    window.addEventListener("storage", updateCartCount)
+
+    return () => {
+      window.removeEventListener("storage", updateCartCount)
+    }
+  }, [])
+
+  // Cập nhật số lượng giỏ hàng mỗi khi component được render lại
+  useEffect(() => {
+    try {
+      const cart = JSON.parse(localStorage.getItem("cart") || "[]")
+      const count = cart.reduce((total, item) => total + item.soLuong, 0)
+      setCartCount(count)
+    } catch (error) {
+      console.error("Lỗi khi đọc giỏ hàng:", error)
+    }
+  })
 
   const handleUserIconClick = () => {
     if (isLoggedIn) {
-      navigate("/user"); // Hiển thị UserProfile
+      navigate("/user")
     } else {
-      navigate("/login"); // Chuyển tới trang đăng nhập
+      navigate("/login")
     }
-  };
-
+  }
 
   return (
     <div className="bg-white shadow z-50 sticky top-0">
       <div className="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
         {/* Logo */}
         <div className="flex items-center space-x-2">
-          <img
-            src={logo}
-            alt="TNQ Store Logo"
-            className="h-15 w-40 object-contain transition-transform duration-300 hover:scale-105 hover:rotate-1"
-          />
+          <Link to="/">
+            <img
+              src={logo || "/placeholder.svg"}
+              alt="TNQ Store Logo"
+              className="h-15 w-40 object-contain transition-transform duration-300 hover:scale-105 hover:rotate-1"
+            />
+          </Link>
         </div>
 
         {/* Menu */}
@@ -55,13 +87,18 @@ const Navbar = () => {
               onMouseEnter={() => item.submenu && setActiveIndex(index)}
               onMouseLeave={() => item.submenu && setActiveIndex(null)}
             >
-              <span
-                className={`cursor-pointer hover:text-red-500 ${
-                  activeIndex === index ? "text-red-500" : ""
-                }`}
-              >
-                {item.title}
-              </span>
+              {item.link ? (
+                <Link
+                  to={item.link}
+                  className={`cursor-pointer hover:text-red-500 ${activeIndex === index ? "text-red-500" : ""}`}
+                >
+                  {item.title}
+                </Link>
+              ) : (
+                <span className={`cursor-pointer hover:text-red-500 ${activeIndex === index ? "text-red-500" : ""}`}>
+                  {item.title}
+                </span>
+              )}
 
               {item.submenu && activeIndex === index && (
                 <div className="absolute left-1/2 transform -translate-x-1/2 top-full w-[700px] bg-white shadow-lg p-6 flex justify-between z-50 transition-all duration-300 ease-in-out opacity-100 translate-y-2">
@@ -70,10 +107,7 @@ const Navbar = () => {
                       <h4 className="font-semibold mb-2">{col.category}</h4>
                       <ul className="space-y-1 text-sm">
                         {col.items.map((subItem, j) => (
-                          <li
-                            key={j}
-                            className="hover:text-red-500 cursor-pointer"
-                          >
+                          <li key={j} className="hover:text-red-500 cursor-pointer">
                             {subItem}
                           </li>
                         ))}
@@ -104,18 +138,22 @@ const Navbar = () => {
               onClick={handleUserIconClick}
               className="h-6 w-6 text-gray-700 hover:text-red-500 cursor-pointer"
             />
-            {isLoggedIn && userData && (
-              <span className="text-sm ml-1">{userData.username}</span>
-            )}
-         
+            {isLoggedIn && userData && <span className="text-sm ml-1">{userData.username}</span>}
           </div>
 
           {/* Cart icon */}
-          <ShoppingBagIcon className="h-6 ms-5 w-6 text-gray-700 hover:text-red-500 cursor-pointer" />
+          <Link to="/cart" className="relative">
+            <ShoppingBagIcon className="h-6 w-6 text-gray-700 hover:text-red-500 cursor-pointer" />
+            {cartCount > 0 && (
+              <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                {cartCount}
+              </span>
+            )}
+          </Link>
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Navbar;
+export default Navbar
