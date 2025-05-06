@@ -1,13 +1,6 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
 
 const ProductCard = ({ product }) => {
-  const navigate = useNavigate();
-
-  const handleClick = () => {
-    navigate(`/product/${product.id}`);
-  };
-
   // Parse giá tiền gốc
   const rawGiaTien = product.giaTien || "0";
   const cleanedGia = Number(rawGiaTien.replace(/[₫,]/g, ""));
@@ -18,10 +11,7 @@ const ProductCard = ({ product }) => {
   const imageUrl = firstColor?.hinhAnh?.[0]?.img || "";
 
   return (
-    <div
-      onClick={handleClick}
-      className="cursor-pointer border rounded-2xl overflow-hidden shadow-md p-4 bg-white hover:shadow-lg transition relative w-full max-w-[250px] h-[320px] flex flex-col justify-between"
-    >
+    <div className="border rounded-2xl overflow-hidden shadow-md p-4 bg-white hover:shadow-lg transition relative w-full max-w-[250px] h-[320px] flex flex-col justify-between">
       {/* Ảnh */}
       <div className="flex justify-center items-center h-[180px] mb-4">
         <img
