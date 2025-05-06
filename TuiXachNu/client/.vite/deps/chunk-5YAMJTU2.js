@@ -1,4 +1,4 @@
-// node_modules/swiper/shared/ssr-window.esm.mjs
+// ../node_modules/swiper/shared/ssr-window.esm.mjs
 function isObject(obj) {
   return obj !== null && typeof obj === "object" && "constructor" in obj && obj.constructor === Object;
 }
@@ -148,7 +148,7 @@ function getWindow() {
   return win;
 }
 
-// node_modules/swiper/shared/utils.mjs
+// ../node_modules/swiper/shared/utils.mjs
 function classesToTokens(classes) {
   if (classes === void 0) {
     classes = "";
@@ -490,4 +490,4 @@ export {
   makeElementsArray,
   getRotateFix
 };
-//# sourceMappingURL=chunk-XLOWEJT4.js.map
+//# sourceMappingURL=chunk-5YAMJTU2.js.map

@@ -18,18 +18,18 @@ import {
   now,
   setCSSProperty,
   showWarning
-} from "./chunk-XLOWEJT4.js";
+} from "./chunk-5YAMJTU2.js";
 import {
   require_react
-} from "./chunk-3527N3GG.js";
+} from "./chunk-YFDKAQMV.js";
 import {
   __toESM
 } from "./chunk-EQCVQC35.js";
 
-// node_modules/swiper/swiper-react.mjs
+// ../node_modules/swiper/swiper-react.mjs
 var import_react = __toESM(require_react(), 1);
 
-// node_modules/swiper/shared/swiper-core.mjs
+// ../node_modules/swiper/shared/swiper-core.mjs
 var support;
 function calcSupport() {
   const window2 = getWindow();
@@ -3730,7 +3730,7 @@ Object.keys(prototypes).forEach((prototypeGroup) => {
 });
 Swiper.use([Resize, Observer]);
 
-// node_modules/swiper/shared/update-swiper.mjs
+// ../node_modules/swiper/shared/update-swiper.mjs
 var paramsList = [
   "eventsPrefix",
   "injectStyles",
@@ -4075,7 +4075,7 @@ function updateSwiper(_ref) {
   swiper.update();
 }
 
-// node_modules/swiper/shared/update-on-virtual-data.mjs
+// ../node_modules/swiper/shared/update-on-virtual-data.mjs
 function getParams(obj, splitEvents) {
   if (obj === void 0) {
     obj = {};
@@ -4199,7 +4199,7 @@ var updateOnVirtualData = (swiper) => {
   }
 };
 
-// node_modules/swiper/swiper-react.mjs
+// ../node_modules/swiper/swiper-react.mjs
 function _extends() {
   _extends = Object.assign ? Object.assign.bind() : function(target) {
     for (var i = 1; i < arguments.length; i++) {

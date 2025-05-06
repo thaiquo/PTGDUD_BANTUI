@@ -2,9 +2,9 @@ import {
   __commonJS
 } from "./chunk-EQCVQC35.js";
 
-// node_modules/react/cjs/react.development.js
+// ../node_modules/react/cjs/react.development.js
 var require_react_development = __commonJS({
-  "node_modules/react/cjs/react.development.js"(exports, module) {
+  "../node_modules/react/cjs/react.development.js"(exports, module) {
     "use strict";
     (function() {
       function defineDeprecationWarning(methodName, info) {
@@ -942,9 +942,9 @@ var require_react_development = __commonJS({
   }
 });
 
-// node_modules/react/index.js
+// ../node_modules/react/index.js
 var require_react = __commonJS({
-  "node_modules/react/index.js"(exports, module) {
+  "../node_modules/react/index.js"(exports, module) {
     if (false) {
       module.exports = null;
     } else {
@@ -969,4 +969,4 @@ react/cjs/react.development.js:
    * LICENSE file in the root directory of this source tree.
    *)
 */
-//# sourceMappingURL=chunk-3527N3GG.js.map
+//# sourceMappingURL=chunk-YFDKAQMV.js.map
