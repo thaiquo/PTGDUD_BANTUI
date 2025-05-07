@@ -1,16 +1,14 @@
-"use client"
-
-import { useState, useEffect } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { MagnifyingGlassIcon, ShoppingBagIcon, UserIcon } from "@heroicons/react/24/outline";
 import logo from "../assets/Logo.jpg";
 import { Link, useNavigate } from "react-router-dom";
+import { UserContext } from "../context/UserProvider";
 
 const Navbar = () => {
+  const { user } = useContext(UserContext);
   const [activeIndex, setActiveIndex] = useState(null);
   const [hoverTimeout, setHoverTimeout] = useState(null);
   const navigate = useNavigate();
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userData, setUserData] = useState(null);
   const [cartCount, setCartCount] = useState(0);
 
   const menu = [
@@ -25,10 +23,6 @@ const Navbar = () => {
   ];
 
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    setIsLoggedIn(!!storedUser);
-    setUserData(storedUser ? JSON.parse(storedUser) : null);
-
     const updateCartCount = () => {
       const cart = JSON.parse(localStorage.getItem("cart") || "[]");
       setCartCount(cart.reduce((total, item) => total + item.soLuong, 0));
@@ -40,7 +34,7 @@ const Navbar = () => {
     return () => window.removeEventListener("storage", updateCartCount);
   }, []);
 
-  const handleUserIconClick = () => navigate(isLoggedIn ? "/user" : "/login");
+  const handleUserIconClick = () => navigate(user ? "/user" : "/login");
 
   const handleMouseEnter = (index) => {
     clearTimeout(hoverTimeout);
@@ -67,7 +61,7 @@ const Navbar = () => {
                   ))}
                 </div>
               )}
-              </li>
+            </li>
           ))}
         </ul>
 
@@ -78,7 +72,6 @@ const Navbar = () => {
           </div>
 
           <UserIcon onClick={handleUserIconClick} className="h-6 w-6 text-gray-700 hover:text-red-500 cursor-pointer" />
-          {isLoggedIn && userData && <span className="text-sm ml-1">{userData.username}</span>}
 
           <Link to="/cart" className="relative">
             <ShoppingBagIcon className="h-6 w-6 text-gray-700 hover:text-red-500" />
