@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router-dom"
 import Navbar from "./Navbar"
 import Footer from "./Footer"
 import provincesData from "/data/vietnam_provinces.json" // Import file JSON
+import { useCart } from "../context/CartContext"
 
 const Checkout = () => {
   const navigate = useNavigate()
@@ -22,17 +23,11 @@ const Checkout = () => {
   const [districts, setDistricts] = useState([])
   const [wards, setWards] = useState([])
 
-  // Giả lập dữ liệu sản phẩm đã chọn
-  const selectedProducts = [
-    {
-      id: 1,
-      tenSanPham: "TDV Đeo Vai Dài Đài Bubbly Sz 26 - Jean",
-      giaTien: "983.000₫",
-      giaTienSo: 983000,
-      soLuong: 1,
-      mauSac: "Xanh Jean",
-    },
-  ]
+  // Lấy sản phẩm đã chọn từ CartContext
+  const { cartItems, selectedItems, calculateTotal, clearCart } = useCart()
+
+  // Lọc ra các sản phẩm đã được chọn
+  const selectedProducts = cartItems.filter((item) => selectedItems[item.id + "-" + item.mauSac])
 
   useEffect(() => {
     // Khi component mount, nếu đã có tỉnh được chọn trước đó,
@@ -43,9 +38,7 @@ const Checkout = () => {
 
       // Nếu đã có quận được chọn, tải danh sách phường/xã tương ứng
       if (formData.district) {
-        const selectedDistrict = selectedProvince?.districts?.find(
-          (district) => district.value === formData.district
-        )
+        const selectedDistrict = selectedProvince?.districts?.find((district) => district.value === formData.district)
         setWards(selectedDistrict?.wards || [])
       } else {
         setWards([]) // Reset phường/xã nếu không có quận nào được chọn
@@ -76,19 +69,25 @@ const Checkout = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault()
+
+    if (selectedProducts.length === 0) {
+      alert("Vui lòng chọn sản phẩm để thanh toán!")
+      return
+    }
+
     // Xử lý đặt hàng ở đây với formData chứa thông tin địa chỉ chi tiết
-    alert("Đặt hàng thành công!" + JSON.stringify(formData))
+    alert("Đặt hàng thành công!")
+
+    // Xóa giỏ hàng sau khi đặt hàng thành công
+    clearCart()
+
+    // Chuyển hướng về trang chủ
     navigate("/")
   }
 
   // Định dạng số tiền
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat("vi-VN").format(amount) + "₫"
-  }
-
-  // Tính tổng tiền
-  const calculateTotal = () => {
-    return selectedProducts.reduce((total, item) => total + item.giaTienSo * item.soLuong, 0)
   }
 
   // Tính phí vận chuyển

@@ -14,7 +14,7 @@ import Navbar from "./components/Navbar";
  
  function App() {
    return (
-     <BrowserRouter>
+     
  
        <Routes>
          <Route path="/" element={<TrangChu />} />
@@ -26,7 +26,7 @@ import Navbar from "./components/Navbar";
          <Route path="/cart" element={<Cart />} />
          <Route path="/checkout" element={<Checkout />} />
        </Routes>
-     </BrowserRouter>
+     
    );
    
  }

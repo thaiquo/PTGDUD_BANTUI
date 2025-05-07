@@ -1,70 +1,90 @@
-import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { FreeMode, Navigation, Thumbs } from "swiper/modules";
-import "swiper/css";
-import "swiper/css/free-mode";
-import "swiper/css/navigation";
-import "swiper/css/thumbs";
-import data from "../../data/menu.json";
+"use client"
+
+import { useState, useEffect } from "react"
+import { useParams } from "react-router-dom"
+import Navbar from "../components/Navbar"
+import Footer from "../components/Footer"
+import { Swiper, SwiperSlide } from "swiper/react"
+import { FreeMode, Navigation, Thumbs } from "swiper/modules"
+import "swiper/css"
+import "swiper/css/free-mode"
+import "swiper/css/navigation"
+import "swiper/css/thumbs"
+import data from "../../data/menu.json"
+import { useCart } from "../context/CartContext"
 
 const ProductDetail = () => {
-  const { id } = useParams(); // Lấy id từ URL
-  const [product, setProduct] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [selectedColor, setSelectedColor] = useState(null);
-  const [thumbsSwiper, setThumbsSwiper] = useState(null);
-  const [quantity, setQuantity] = useState(1);
+  const { id } = useParams() // Lấy id từ URL
+  const [product, setProduct] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [selectedColor, setSelectedColor] = useState(null)
+  const [thumbsSwiper, setThumbsSwiper] = useState(null)
+  const [quantity, setQuantity] = useState(1)
 
   // Fetch dữ liệu sản phẩm từ JSON
   useEffect(() => {
     // Giả lập việc fetch dữ liệu
     const fetchProduct = () => {
-      setLoading(true);
+      setLoading(true)
       try {
         // Tìm sản phẩm theo id
-        const foundProduct = data.sanpham.find(
-          (item) => item.id === parseInt(id)
-        );
-        
+        const foundProduct = data.sanpham.find((item) => item.id === Number.parseInt(id))
+
         if (foundProduct) {
-          setProduct(foundProduct);
+          setProduct(foundProduct)
           // Mặc định chọn màu đầu tiên
           if (foundProduct.mauSac && foundProduct.mauSac.length > 0) {
-            setSelectedColor(foundProduct.mauSac[0]);
+            setSelectedColor(foundProduct.mauSac[0])
           }
         }
       } catch (error) {
-        console.error("Error fetching product:", error);
+        console.error("Error fetching product:", error)
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
-    };
+    }
 
-    fetchProduct();
-  }, [id]);
+    fetchProduct()
+  }, [id])
 
   // Xử lý khi thay đổi số lượng
   const handleQuantityChange = (action) => {
     if (action === "increase") {
-      setQuantity(quantity + 1);
+      setQuantity(quantity + 1)
     } else if (action === "decrease" && quantity > 1) {
-      setQuantity(quantity - 1);
+      setQuantity(quantity - 1)
     }
-  };
+  }
 
   // Xử lý khi thay đổi màu sắc
   const handleColorChange = (color) => {
-    setSelectedColor(color);
-  };
+    setSelectedColor(color)
+  }
+
+  const { addToCart } = useCart()
 
   // Xử lý thêm vào giỏ hàng
   const handleAddToCart = () => {
-    alert(`Đã thêm ${quantity} sản phẩm vào giỏ hàng!`);
-    // Thêm logic lưu vào giỏ hàng ở đây
-  };
+    if (!selectedColor) {
+      alert("Vui lòng chọn màu sắc trước khi thêm vào giỏ hàng!")
+      return
+    }
+
+    addToCart(product, quantity, selectedColor)
+    alert(`Đã thêm ${quantity} sản phẩm vào giỏ hàng!`)
+  }
+
+  // Xử lý mua ngay
+  const handleBuyNow = () => {
+    if (!selectedColor) {
+      alert("Vui lòng chọn màu sắc trước khi mua hàng!")
+      return
+    }
+
+    addToCart(product, quantity, selectedColor)
+    // Chuyển hướng đến trang thanh toán
+    window.location.href = "/checkout"
+  }
 
   // Hiển thị loading khi đang tải dữ liệu
   if (loading) {
@@ -76,7 +96,7 @@ const ProductDetail = () => {
         </div>
         <Footer />
       </>
-    );
+    )
   }
 
   // Hiển thị thông báo nếu không tìm thấy sản phẩm
@@ -86,15 +106,13 @@ const ProductDetail = () => {
         <Navbar />
         <div className="min-h-screen flex items-center justify-center">
           <div className="text-center">
-            <h2 className="text-2xl font-bold text-red-600">
-              Không tìm thấy sản phẩm!
-            </h2>
+            <h2 className="text-2xl font-bold text-red-600">Không tìm thấy sản phẩm!</h2>
             <p className="mt-2">Sản phẩm không tồn tại hoặc đã bị xóa.</p>
           </div>
         </div>
         <Footer />
       </>
-    );
+    )
   }
 
   return (
@@ -152,9 +170,7 @@ const ProductDetail = () => {
           {/* Phần thông tin sản phẩm */}
           <div className="md:w-1/2">
             <h1 className="text-2xl font-bold mb-2">{product.tenSanPham}</h1>
-            <p className="text-xl font-semibold text-red-600 mb-4">
-              {product.giaTien}
-            </p>
+            <p className="text-xl font-semibold text-red-600 mb-4">{product.giaTien}</p>
 
             {/* Chọn màu sắc */}
             <div className="mb-6">
@@ -165,14 +181,10 @@ const ProductDetail = () => {
                     key={color.id}
                     onClick={() => handleColorChange(color)}
                     className={`w-12 h-12 rounded-full border-2 flex items-center justify-center ${
-                      selectedColor && selectedColor.id === color.id
-                        ? "border-blue-500"
-                        : "border-gray-300"
+                      selectedColor && selectedColor.id === color.id ? "border-blue-500" : "border-gray-300"
                     }`}
                   >
-                    <span className="text-xs text-center">
-                      {color.mau.split("-")[0]}
-                    </span>
+                    <span className="text-xs text-center">{color.mau.split("-")[0]}</span>
                   </button>
                 ))}
               </div>
@@ -211,7 +223,10 @@ const ProductDetail = () => {
               >
                 THÊM VÀO GIỎ
               </button>
-              <button className="px-6 py-3 bg-black text-white font-medium rounded-md hover:bg-gray-800 transition">
+              <button
+                onClick={handleBuyNow}
+                className="px-6 py-3 bg-black text-white font-medium rounded-md hover:bg-gray-800 transition"
+              >
                 MUA NGAY
               </button>
             </div>
@@ -221,12 +236,10 @@ const ProductDetail = () => {
               <h3 className="font-semibold mb-2">Thông tin sản phẩm:</h3>
               <ul className="space-y-2 text-sm">
                 <li>
-                  <span className="font-medium">Chất liệu:</span>{" "}
-                  {product.chatLieu}
+                  <span className="font-medium">Chất liệu:</span> {product.chatLieu}
                 </li>
                 <li>
-                  <span className="font-medium">Kích thước:</span>{" "}
-                  {product.kichThuoc}
+                  <span className="font-medium">Kích thước:</span> {product.kichThuoc}
                 </li>
                 <li>
                   <span className="font-medium">Xuất xứ:</span> {product.xuatxu}
@@ -235,8 +248,7 @@ const ProductDetail = () => {
                   <span className="font-medium">Loại:</span> {product.loai}
                 </li>
                 <li>
-                  <span className="font-medium">Phong cách:</span>{" "}
-                  {product.phongCach}
+                  <span className="font-medium">Phong cách:</span> {product.phongCach}
                 </li>
               </ul>
             </div>
@@ -270,7 +282,7 @@ const ProductDetail = () => {
       </div>
       <Footer />
     </>
-  );
-};
+  )
+}
 
-export default ProductDetail;
+export default ProductDetail
