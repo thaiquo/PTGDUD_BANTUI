@@ -1,13 +1,18 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Pagination, Navigation } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
-
-import menuData from "../../data/menu.json";
+import { ProductContext } from "../context/ProductProvider"; // Sử dụng context
 
 const HeroSlider = () => {
+  const { banner } = useContext(ProductContext); // Lấy banner từ context
+
+  if (!banner || banner.length === 0) {
+    return <div>Đang tải banner...</div>;
+  }
+
   return (
     <div className="mb-1.5 w-full h-[80vh] max-h-[700px]">
       <Swiper
@@ -22,7 +27,7 @@ const HeroSlider = () => {
         modules={[Autoplay, Pagination, Navigation]}
         className="w-full h-full"
       >
-        {menuData.banner.map((slide) => (
+        {banner.map((slide) => (
           <SwiperSlide key={slide.id}>
             <img
               src={slide.imageUrl}

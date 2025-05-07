@@ -4,15 +4,48 @@ import {
   ShoppingBagIcon,
   UserIcon,
 } from "@heroicons/react/24/outline";
-import menuData from "../../data/menu.json";
 import logo from "../assets/Logo.jpg";
 import { Link, useNavigate } from "react-router-dom";
 
 const Navbar = () => {
   const [activeIndex, setActiveIndex] = useState(null);
+  const [hoverTimeout, setHoverTimeout] = useState(null); // State cho timeout
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userData, setUserData] = useState(null);
+
+  // Menu cố định
+  const menu = [
+    {
+      title: "Trang chủ",
+      link: "/",
+    },
+    {
+      title: "Sản Phẩm",
+      submenu: [
+        {
+          category: "LOẠI TÚI",
+          items: ["Túi xách tay", "Túi đeo chéo", "Túi đeo vai", "Túi mini", "Túi tote"],
+        },
+        {
+          category: "CHẤT LIỆU",
+          items: ["Da tổng hợp", "Vải canvas", "Da lộn", "Nhựa trong suốt"],
+        },
+        {
+          category: "PHONG CÁCH",
+          items: ["Công sở", "Dạo phố", "Dự tiệc", "Du lịch"],
+        },
+      ],
+    },
+    {
+      title: "Sale",
+      link: "/sale",
+    },
+    {
+      title: "Hỗ trợ",
+      link: "/support",
+    },
+  ];
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
@@ -27,12 +60,23 @@ const Navbar = () => {
 
   const handleUserIconClick = () => {
     if (isLoggedIn) {
-      navigate("/user"); // Hiển thị UserProfile
+      navigate("/user");
     } else {
-      navigate("/login"); // Chuyển tới trang đăng nhập
+      navigate("/login");
     }
   };
 
+  const handleMouseEnter = (index) => {
+    clearTimeout(hoverTimeout); // Xóa timeout nếu chuột quay lại
+    setActiveIndex(index);
+  };
+
+  const handleMouseLeave = () => {
+    const timeout = setTimeout(() => {
+      setActiveIndex(null);
+    }, 1000); // 2 giây
+    setHoverTimeout(timeout);
+  };
 
   return (
     <div className="bg-white shadow z-50 sticky top-0">
@@ -48,42 +92,44 @@ const Navbar = () => {
 
         {/* Menu */}
         <ul className="flex space-x-8 font-medium text-gray-700">
-          {menuData.menu.map((item, index) => (
-            <li
-              key={index}
-              className="relative"
-              onMouseEnter={() => item.submenu && setActiveIndex(index)}
-              onMouseLeave={() => item.submenu && setActiveIndex(null)}
-            >
-              <span
-                className={`cursor-pointer hover:text-red-500 ${
-                  activeIndex === index ? "text-red-500" : ""
-                }`}
+          {menu.length > 0 ? (
+            menu.map((item, index) => (
+              <li
+                key={index}
+                className="relative"
+                onMouseEnter={() => handleMouseEnter(index)}
+                onMouseLeave={handleMouseLeave}
               >
-                {item.title}
-              </span>
+                <Link
+                  to={item.link || "#"}
+                  className={`cursor-pointer hover:text-red-500 ${
+                    activeIndex === index ? "text-red-500" : ""
+                  }`}
+                >
+                  {item.title}
+                </Link>
 
-              {item.submenu && activeIndex === index && (
-                <div className="absolute left-1/2 transform -translate-x-1/2 top-full w-[700px] bg-white shadow-lg p-6 flex justify-between z-50 transition-all duration-300 ease-in-out opacity-100 translate-y-2">
-                  {item.submenu.map((col, i) => (
-                    <div key={i}>
-                      <h4 className="font-semibold mb-2">{col.category}</h4>
-                      <ul className="space-y-1 text-sm">
-                        {col.items.map((subItem, j) => (
-                          <li
-                            key={j}
-                            className="hover:text-red-500 cursor-pointer"
-                          >
-                            {subItem}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </li>
-          ))}
+                {item.submenu && activeIndex === index && (
+                  <div className="absolute left-1/2 transform -translate-x-1/2 top-full w-[700px] bg-white shadow-lg p-6 flex justify-between z-50 transition-all duration-300 ease-in-out opacity-100 translate-y-2">
+                    {item.submenu.map((col, i) => (
+                      <div key={i}>
+                        <h4 className="font-semibold mb-2">{col.category}</h4>
+                        <ul className="space-y-1 text-sm">
+                          {col.items.map((subItem, j) => (
+                            <li key={j} className="hover:text-red-500 cursor-pointer">
+                              {subItem}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </li>
+            ))
+          ) : (
+            <li>Đang tải menu...</li>
+          )}
         </ul>
 
         {/* Icons */}
@@ -107,7 +153,6 @@ const Navbar = () => {
             {isLoggedIn && userData && (
               <span className="text-sm ml-1">{userData.username}</span>
             )}
-         
           </div>
 
           {/* Cart icon */}
