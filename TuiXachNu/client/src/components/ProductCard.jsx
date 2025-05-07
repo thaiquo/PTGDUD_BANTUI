@@ -2,7 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 
 const ProductCard = ({ product }) => {
-  const navigate = useNavigate();
+  const navigate = useNavigate(); // Kết hợp useNavigate
 
   const handleClick = () => {
     navigate(`/product/${product.id}`);
@@ -13,7 +13,6 @@ const ProductCard = ({ product }) => {
   const cleanedGia = Number(rawGiaTien.replace(/[₫,]/g, ""));
   const salePrice = Math.round(cleanedGia * 0.9);
 
-  // Lấy hình ảnh đầu tiên từ màu đầu tiên
   const firstColor = product.mauSac?.[0];
   const imageUrl = firstColor?.hinhAnh?.[0]?.img || "";
 
@@ -31,12 +30,10 @@ const ProductCard = ({ product }) => {
         />
       </div>
 
-      {/* Tên sản phẩm */}
       <h2 className="text-base font-semibold mb-2 line-clamp-2 h-[48px]">
         {product.tenSanPham}
       </h2>
 
-      {/* Giá */}
       <div className="flex justify-between items-center mb-2">
         <span className="text-red-600 font-bold text-base">
           {salePrice.toLocaleString()}₫
@@ -46,7 +43,6 @@ const ProductCard = ({ product }) => {
         </span>
       </div>
 
-      {/* Flash Sale tag */}
       <span className="absolute top-2 right-2 bg-red-600 text-white text-xs px-2 py-1 rounded">
         FLASH SALE
       </span>

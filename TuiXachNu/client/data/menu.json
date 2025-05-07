@@ -11,35 +11,6 @@
     }],
     "register": [],
     "login": [],
-    "menu": [{
-            "title": "Trang chủ",
-            "link": "/"
-        },
-        {
-            "title": "Sản Phẩm",
-            "submenu": [{
-                    "category": "LOẠI TÚI",
-                    "items": ["Túi xách tay", "Túi đeo chéo", "Túi đeo vai", "Túi mini", "Túi tote"]
-                },
-                {
-                    "category": "CHẤT LIỆU",
-                    "items": ["Da tổng hợp", "Vải canvas", "Da lộn", "Nhựa trong suốt"]
-                },
-                {
-                    "category": "PHONG CÁCH",
-                    "items": ["Công sở", "Dạo phố", "Dự tiệc", "Du lịch"]
-                }
-            ]
-        },
-        {
-            "title": "Sale",
-            "link": "/sale"
-        },
-        {
-            "title": "Hỗ trợ",
-            "link": "/support"
-        }
-    ],
     "banner": [{
             "id": 1,
             "imageUrl": "https://scontent.fsgn19-1.fna.fbcdn.net/v/t39.30808-6/490304145_1114739197362563_8865256658645798956_n.jpg?_nc_cat=108&ccb=1-7&_nc_sid=cc71e4&_nc_eui2=AeGUycnN0bqDdkx-nepytbFVfsmPaZzSe0V-yY9pnNJ7RedUNzK3YmAqF1rDOAwtdpc2PalVu7_LHi645BeK9oRi&_nc_ohc=jgFmTYkNQAUQ7kNvwGymf9F&_nc_oc=Adlea4Rai3iA43d10Ah1kogdYHSwsQtYcKlFtf0PuNAr2D5RX3wVwx2DUv5rx3ZC6S3BaCDnbyi-8emSduKCVMGj&_nc_zt=23&_nc_ht=scontent.fsgn19-1.fna&_nc_gid=o4vTiVe5M1IBKWVL6C3WRQ&oh=00_AfHFAFjtoayHjsvHG1x4PKW4duXHFB71jo-BGvOLofSeaA&oe=681EDECB",
