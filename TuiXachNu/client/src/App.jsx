@@ -7,6 +7,7 @@ import UserProfile from "./components/UserProfile"
 import ProductDetail from "./pages/ProductDetail"
 import Cart from "./pages/Cart"
 import Checkout from "./components/Checkout"
+import Products from "./pages/Products"
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
         <Route path="/user" element={<UserProfile />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/checkout" element={<Checkout />} />
+        <Route path="/productList" element={<Products />} />
       </Routes>
     </BrowserRouter>
   )

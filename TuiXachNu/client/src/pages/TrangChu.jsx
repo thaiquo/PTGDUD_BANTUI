@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
+import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import HeroSlider from "../components/HeroSlider";
 import ProductCard from "../components/ProductCard";
@@ -100,7 +101,7 @@ const TrangChu = () => {
             <h3>TNQ Store - Nơi phong cách bắt đầu</h3>
           </div>
           <button className="bg-white text-red-600 px-5 py-2 rounded-full font-semibold hover:bg-red-100 transition duration-300 text-sm">
-            Khám phá ngay
+            <Link to="/productList">Khám phá ngay</Link>
           </button>
         </div>
       </div>
