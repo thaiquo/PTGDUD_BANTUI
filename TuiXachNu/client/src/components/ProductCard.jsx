@@ -13,8 +13,12 @@ const ProductCard = ({ product }) => {
   const cleanedGia = Number(rawGiaTien.replace(/[₫,]/g, ""));
   const salePrice = Math.round(cleanedGia * 0.9);
 
+  // Lấy hình ảnh màu sắc đầu tiên
   const firstColor = product.mauSac?.[0];
   const imageUrl = firstColor?.hinhAnh?.[0]?.img || "";
+
+  // Kiểm tra trạng thái sale
+  const isOnSale = product.trangThai === 0;
 
   return (
     <div
@@ -35,19 +39,30 @@ const ProductCard = ({ product }) => {
       </h2>
 
       <div className="flex justify-between items-center mb-2">
-        <span className="text-red-600 font-bold text-base">
-          {salePrice.toLocaleString()}₫
-        </span>
-        <span className="text-gray-500 line-through text-sm">
-          {cleanedGia.toLocaleString()}₫
-        </span>
+        {isOnSale ? (
+          <>
+            <span className="text-red-600 font-bold text-base">
+              {salePrice.toLocaleString()}₫
+            </span>
+            <span className="text-gray-500 line-through text-sm">
+              {cleanedGia.toLocaleString()}₫
+            </span>
+          </>
+        ) : (
+          <span className="text-gray-800 font-semibold text-base">
+            {cleanedGia.toLocaleString()}₫
+          </span>
+        )}
       </div>
 
-      <span className="absolute top-2 right-2 bg-red-600 text-white text-xs px-2 py-1 rounded">
-        FLASH SALE
-      </span>
+      {isOnSale && (
+        <span className="absolute top-2 right-2 bg-red-600 text-white text-xs px-2 py-1 rounded">
+          FLASH SALE
+        </span>
+      )}
     </div>
   );
 };
 
 export default ProductCard;
+
