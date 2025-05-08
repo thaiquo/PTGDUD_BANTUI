@@ -1,8 +1,8 @@
 // client/src/pages/ProductDetail.jsx
 "use client"
 
-import { useState, useEffect, useContext } from "react"
-import { useParams } from "react-router-dom"
+import React, { useState, useEffect, useContext } from "react"
+import { useParams, useLocation } from "react-router-dom"
 import Navbar from "../components/Navbar"
 import Footer from "../components/Footer"
 import { Swiper, SwiperSlide } from "swiper/react"
@@ -11,9 +11,13 @@ import "swiper/css"
 import "swiper/css/navigation"
 import "swiper/css/thumbs"
 import { ProductContext } from "../context/ProductProvider"
+import PageTransition from "../components/PageTransition"
+import PolicyTabs from "../components/PolicyTabs"
+import FlashSaleSlider from "../components/FlashSaleSlider"
 
 const ProductDetail = () => {
   const { id } = useParams()
+  const location = useLocation()
   const {
     products,
     loading: contextLoading,
@@ -32,7 +36,6 @@ const ProductDetail = () => {
   useEffect(() => {
     if (!contextLoading && !contextError && products && products.length > 0) {
       const foundProduct = products.find((item) => item.id === Number.parseInt(id))
-
       if (foundProduct) {
         setProduct(foundProduct)
         if (foundProduct.mauSac?.length > 0) {
@@ -45,7 +48,8 @@ const ProductDetail = () => {
         setSelectedColor(null)
       }
     }
-  }, [id, products, contextLoading, contextError])
+    window.scrollTo(0, 10)
+  }, [id, products, location.pathname, contextLoading, contextError])
 
   const handleQuantityChange = (type) => {
     if (type === "increase") setQuantity(quantity + 1)
@@ -72,13 +76,6 @@ const ProductDetail = () => {
         setAddingToCart(true)
         setCartMessage(null)
 
-        console.log("Current user:", currentUser)
-        console.log("Adding to cart:", {
-          idProduct: String(product.id),
-          quantity: quantity,
-        })
-
-        // Simplify the cart item to only include what the server needs
         const cartItem = {
           idProduct: String(product.id),
           quantity: quantity,
@@ -122,9 +119,7 @@ const ProductDetail = () => {
         <div className="min-h-screen flex items-center justify-center">
           <div className="text-center">
             <h2 className="text-2xl font-bold text-red-600">Lỗi tải dữ liệu!</h2>
-            <p className="mt-2">
-              {typeof contextError === "string" ? contextError : "Không thể kết nối đến máy chủ hoặc có lỗi xảy ra."}
-            </p>
+            <p className="mt-2">{typeof contextError === "string" ? contextError : "Không thể kết nối đến máy chủ hoặc có lỗi xảy ra."}</p>
           </div>
         </div>
         <Footer />
@@ -148,19 +143,15 @@ const ProductDetail = () => {
   }
 
   return (
-    <>
+    <PageTransition>
       <Navbar />
       <div className="max-w-7xl mx-auto px-4 py-8">
         {cartMessage && (
-          <div
-            className={`mb-4 p-3 rounded ${cartMessage.type === "success" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}
-          >
-            {cartMessage.text}
-          </div>
+          <div className={`mb-4 p-3 rounded ${cartMessage.type === "success" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>{cartMessage.text}</div>
         )}
 
         <div className="flex flex-col md:flex-row gap-8">
-          <div className="md:w-1/2">
+          <div className="md:w-7/12">
             {selectedColor && selectedColor.hinhAnh?.length > 0 ? (
               <>
                 <Swiper
@@ -214,10 +205,27 @@ const ProductDetail = () => {
           <div className="md:w-1/2">
             <h1 className="text-3xl font-bold mb-2">{product.tenSanPham}</h1>
             <p className="text-2xl text-red-600 font-semibold my-3">
-              {Number.parseInt(String(product.giaTien).replace(/\D/g, "")).toLocaleString("vi-VN", {
-                style: "currency",
-                currency: "VND",
-              })}
+              {product.trangThai === 0 ? (
+                <>
+                  <span className="line-through text-gray-500 mr-2">
+                    {Number.parseInt(String(product.giaTien).replace(/\D/g, "")).toLocaleString("vi-VN", {
+                      style: "currency",
+                      currency: "VND",
+                    })}
+                  </span>
+                  <span className="text-red-600 font-semibold">
+                    {(Number.parseInt(String(product.giaTien).replace(/\D/g, "")) * 0.9).toLocaleString("vi-VN", {
+                      style: "currency",
+                      currency: "VND",
+                    })}
+                  </span>
+                </>
+              ) : (
+                Number.parseInt(String(product.giaTien).replace(/\D/g, "")).toLocaleString("vi-VN", {
+                  style: "currency",
+                  currency: "VND",
+                })
+              )}
             </p>
 
             {product.mauSac && product.mauSac.length > 0 && (
@@ -231,8 +239,8 @@ const ProductDetail = () => {
                       key={color.id}
                       onClick={() => handleColorChange(color)}
                       className={`w-10 h-10 border-2 rounded-full transition-all duration-200 ease-in-out transform hover:scale-110
-                                                ${selectedColor?.id === color.id ? "border-red-500 ring-2 ring-red-300" : "border-gray-300"}
-                                                focus:outline-none focus:ring-2 focus:ring-red-400`}
+                        ${selectedColor?.id === color.id ? "border-red-500 ring-2 ring-red-300" : "border-gray-300"}
+                        focus:outline-none focus:ring-2 focus:ring-red-400`}
                       title={color.mau}
                       style={{ backgroundColor: color.maCode || "transparent" }}
                     >
@@ -288,13 +296,43 @@ const ProductDetail = () => {
                 MUA NGAY
               </button>
             </div>
+            {/* Thông tin mô tả */}
+            <div className="border-t pt-4">
+              <h3 className="font-semibold mb-2 text-md">Thông tin sản phẩm:</h3>
+              <ul className="text-sm space-y-1 text-gray-700">
+                {product.chatLieu && <li><strong>Chất liệu:</strong> {product.chatLieu}</li>}
+                {product.kichThuoc && <li><strong>Kích thước:</strong> {product.kichThuoc}</li>}
+                {product.xuatxu && <li><strong>Xuất xứ:</strong> {product.xuatxu}</li>}
+                {product.loai && <li><strong>Loại:</strong> {product.loai}</li>}
+                {product.phongCach && <li><strong>Phong cách:</strong> {product.phongCach}</li>}
+              </ul>
+            </div>
 
-            {/* Rest of your component remains the same */}
+            {/* Mô tả chi tiết */}
+            {product.moTa && (
+              <div className="border-t pt-4 mt-4">
+                <h3 className="font-semibold mb-2 text-md">Mô tả chi tiết:</h3>
+                <p className="text-sm text-gray-700 whitespace-pre-line">{product.moTa}</p>
+              </div>
+            )}
+            
+            {/* Chính sách */}
+            <div className="border-t pt-4 mt-4 bg-gray-50 p-4 rounded-md">
+              <h3 className="font-semibold mb-2 text-md">Chính sách & Ưu đãi:</h3>
+              <ul className="text-sm space-y-1 text-gray-700 list-disc list-inside">
+                <li>Miễn phí giao hàng cho đơn từ 500.000đ</li>
+                <li>Đổi trả miễn phí trong 30 ngày</li>
+                <li>Bảo hành chính hãng 12 tháng</li>
+                <li>Tích điểm thành viên nhận ưu đãi</li>
+              </ul>
+            </div>
           </div>
         </div>
       </div>
+      <PolicyTabs />
+      <FlashSaleSlider />
       <Footer />
-    </>
+    </PageTransition>
   )
 }
 
