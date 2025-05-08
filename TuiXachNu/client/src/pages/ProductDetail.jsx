@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState, useEffect, useContext } from "react" // Thêm useContext
-import { useParams } from "react-router-dom"
+import { useParams, useLocation } from "react-router-dom"
 import Navbar from "../components/Navbar"
 import Footer from "../components/Footer"
 import { Swiper, SwiperSlide } from "swiper/react"
@@ -11,16 +11,21 @@ import "swiper/css/navigation"
 import "swiper/css/thumbs"
 // import data from "../../data/menu.json" // Xóa import trực tiếp
 import { ProductContext } from "../context/ProductProvider" // Import ProductContext
+import PageTransition from "../components/PageTransition"
+import PolicyTabs from "../components/PolicyTabs"
+import FlashSaleSlider from "../components/FlashSaleSlider"
+
 
 const ProductDetail = () => {
   const { id } = useParams()
   const { products, loading: contextLoading, error: contextError } = useContext(ProductContext) // Sử dụng context
-
+  const [localLoading, setLocalLoading] = useState(true);
   const [product, setProduct] = useState(null)
   // const [loading, setLoading] = useState(true) // Sẽ sử dụng contextLoading
   const [selectedColor, setSelectedColor] = useState(null)
   const [thumbsSwiper, setThumbsSwiper] = useState(null)
   const [quantity, setQuantity] = useState(1)
+  const location = useLocation()
 
   useEffect(() => {
     // Chỉ tìm sản phẩm khi context đã tải xong, không có lỗi và có sản phẩm
@@ -45,8 +50,9 @@ const ProductDetail = () => {
       setProduct(null)
       setSelectedColor(null)
     }
+    window.scrollTo(0, 10);
     // Không cần setLoading(false) ở đây nữa vì chúng ta dựa vào contextLoading
-  }, [id, products, contextLoading, contextError]) // Thêm contextLoading và contextError vào dependencies
+  }, [id, products,location.pathname, contextLoading, contextError]) // Thêm contextLoading và contextError vào dependencies
 
   const handleQuantityChange = (type) => {
     if (type === "increase") setQuantity(quantity + 1)
@@ -138,12 +144,12 @@ const ProductDetail = () => {
 
   // Hiển thị chi tiết sản phẩm
   return (
-    <>
+    <PageTransition>
       <Navbar />
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="flex flex-col md:flex-row gap-8">
           {/* Ảnh sản phẩm */}
-          <div className="md:w-1/2">
+          <div className="md:w-7/12">
             {selectedColor && selectedColor.hinhAnh?.length > 0 ? (
               <>
                 <Swiper
@@ -159,7 +165,7 @@ const ProductDetail = () => {
                       <img
                         src={img.img || "/placeholder.svg"}
                         alt={`${product.tenSanPham} - ${selectedColor.mau} - ${index + 1}`}
-                        className="w-full h-[400px] object-contain md:object-cover rounded-lg" // Thay đổi object-fit nếu cần
+                        className="w-full h-[500px] object-contain md:object-cover rounded-lg"// Thay đổi object-fit nếu cần
                       />
                     </SwiperSlide>
                   ))}
@@ -198,9 +204,28 @@ const ProductDetail = () => {
           <div className="md:w-1/2">
             <h1 className="text-3xl font-bold mb-2">{product.tenSanPham}</h1>
             <p className="text-2xl text-red-600 font-semibold my-3">
-              {/* Định dạng giá tiền nếu cần */}
-              {Number.parseInt(String(product.giaTien).replace(/\D/g, "")).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
-            </p>
+  {/* Kiểm tra nếu sản phẩm đang giảm giá (trangthai === 0) */}
+  {product.trangThai === 0 ? (
+    <>
+      <span className="line-through text-gray-500 mr-2">
+        {/* Hiển thị giá gốc bị gạch */}
+        {Number.parseInt(String(product.giaTien).replace(/\D/g, ""))
+          .toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
+      </span>
+      <span className="text-red-600 font-semibold">
+        {/* Hiển thị giá sau giảm 10% */}
+        {(
+          Number.parseInt(String(product.giaTien).replace(/\D/g, "")) * 0.9
+        )
+          .toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
+      </span>
+    </>
+  ) : (
+    // Nếu không có giảm giá, chỉ hiển thị giá gốc
+    Number.parseInt(String(product.giaTien).replace(/\D/g, ""))
+      .toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })
+  )}
+</p>
 
             {/* Màu sắc */}
             {product.mauSac && product.mauSac.length > 0 && (
@@ -303,8 +328,10 @@ const ProductDetail = () => {
           </div>
         </div>
       </div>
+      <PolicyTabs></PolicyTabs>
+      <FlashSaleSlider></FlashSaleSlider>
       <Footer />
-    </>
+    </PageTransition>
   )
 }
 
