@@ -8,6 +8,8 @@ import ProductDetail from "./pages/ProductDetail"
 import Cart from "./pages/Cart"
 import Checkout from "./components/Checkout"
 import Products from "./pages/Products"
+import OrderHistory from "./pages/OderHistory"
+
 
 function App() {
   return (
@@ -21,6 +23,7 @@ function App() {
         <Route path="/cart" element={<Cart />} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/productList" element={<Products />} />
+        <Route path="/order-history" element={<OrderHistory />} />
       </Routes>
     </BrowserRouter>
   )

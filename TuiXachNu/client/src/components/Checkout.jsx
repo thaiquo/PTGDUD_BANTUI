@@ -1,13 +1,15 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { Link, useNavigate } from "react-router-dom"
-import Navbar from "./Navbar"
-import Footer from "./Footer"
-import provincesData from "/data/vietnam_provinces.json" // Import file JSON
+import { useState, useEffect, useContext } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
+import { ProductContext } from "../context/ProductProvider";
+import provincesData from "/data/vietnam_provinces.json"; // Adjust path as needed
 
 const Checkout = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+  const { currentUser } = useContext(ProductContext);
   const [formData, setFormData] = useState({
     fullName: "",
     phone: "",
@@ -18,90 +20,169 @@ const Checkout = () => {
     ward: "",
     paymentMethod: "cod",
     note: "",
-  })
-  const [districts, setDistricts] = useState([])
-  const [wards, setWards] = useState([])
-
-  // Giả lập dữ liệu sản phẩm đã chọn
-  const selectedProducts = [
-    {
-      id: 1,
-      tenSanPham: "TDV Đeo Vai Dài Đài Bubbly Sz 26 - Jean",
-      giaTien: "983.000₫",
-      giaTienSo: 983000,
-      soLuong: 1,
-      mauSac: "Xanh Jean",
-    },
-  ]
+  });
+  const [districts, setDistricts] = useState([]);
+  const [wards, setWards] = useState([]);
+  const [cartItems, setCartItems] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Khi component mount, nếu đã có tỉnh được chọn trước đó,
-    // hãy tải danh sách quận/huyện tương ứng
-    if (formData.city) {
-      const selectedProvince = provincesData.find((province) => province.value === formData.city)
-      setDistricts(selectedProvince?.districts || [])
+    // Get selected items from sessionStorage
+    const checkoutItems = sessionStorage.getItem("checkoutItems");
+    if (checkoutItems) {
+      setCartItems(JSON.parse(checkoutItems));
+    } else {
+      // Redirect back to cart if no items were selected
+      navigate("/cart");
+    }
 
-      // Nếu đã có quận được chọn, tải danh sách phường/xã tương ứng
+    // Pre-fill email from user data if available
+    if (currentUser?.email) {
+      setFormData((prev) => ({
+        ...prev,
+        email: currentUser.email,
+      }));
+    }
+  }, [currentUser, navigate]);
+
+  useEffect(() => {
+    if (formData.city) {
+      const selectedProvince = provincesData.find((province) => province.value === formData.city);
+      setDistricts(selectedProvince?.districts || []);
       if (formData.district) {
-        const selectedDistrict = selectedProvince?.districts?.find(
-          (district) => district.value === formData.district
-        )
-        setWards(selectedDistrict?.wards || [])
+        const selectedDistrict = selectedProvince?.districts?.find((district) => district.value === formData.district);
+        setWards(selectedDistrict?.wards || []);
       } else {
-        setWards([]) // Reset phường/xã nếu không có quận nào được chọn
+        setWards([]);
       }
     } else {
-      setDistricts([]) // Reset quận/huyện nếu không có tỉnh nào được chọn
-      setWards([]) // Reset phường/xã
+      setDistricts([]);
+      setWards([]);
     }
-  }, [formData.city, formData.district])
+  }, [formData.city, formData.district]);
 
   const handleChange = (e) => {
-    const { name, value } = e.target
+    const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
       [name]: value,
-    }))
+    }));
 
-    // Nếu thay đổi tỉnh, reset quận và phường
     if (name === "city") {
-      setFormData((prev) => ({ ...prev, district: "", ward: "" }))
+      setFormData((prev) => ({ ...prev, district: "", ward: "" }));
     }
 
-    // Nếu thay đổi quận, reset phường
     if (name === "district") {
-      setFormData((prev) => ({ ...prev, ward: "" }))
+      setFormData((prev) => ({ ...prev, ward: "" }));
     }
-  }
+  };
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    // Xử lý đặt hàng ở đây với formData chứa thông tin địa chỉ chi tiết
-    alert("Đặt hàng thành công!" + JSON.stringify(formData))
-    navigate("/")
-  }
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  // Định dạng số tiền
+    if (!currentUser) {
+      setError("Vui lòng đăng nhập để đặt hàng");
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      // Format items for the order
+      const orderItems = cartItems.map((item) => ({
+        idProduct: item.idProduct,
+        quantity: item.quantity,
+      }));
+
+      // Create shipping info object
+      const shippingInfo = {
+        fullName: formData.fullName,
+        phone: formData.phone,
+        email: formData.email,
+        address: formData.address,
+        city: formData.city,
+        district: formData.district,
+        ward: formData.ward,
+        note: formData.note,
+        paymentMethod: formData.paymentMethod,
+      };
+
+      // Send order to server
+      const API_BASE =
+        process.env.NODE_ENV === "development" ? "http://localhost:3000" : "https://ptgud-tv-store-react.onrender.com";
+      const response = await fetch(`${API_BASE}/api/create-order`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId: currentUser.id,
+          items: orderItems,
+          shippingInfo,
+        }),
+      });
+
+      // Check if response is ok
+      if (!response.ok) {
+        const text = await response.text();
+        console.error("Server response:", text);
+        throw new Error(text || "Đã xảy ra lỗi khi đặt hàng");
+      }
+
+      const data = await response.json();
+
+      // Clear checkout items from sessionStorage
+      sessionStorage.removeItem("checkoutItems");
+
+      // Show success message and redirect
+      alert("Đặt hàng thành công! Mã đơn hàng: " + data.orderId);
+      navigate("/order-history");
+    } catch (err) {
+      console.error("Error creating order:", err);
+      setError(err.message || "Đã xảy ra lỗi khi đặt hàng. Vui lòng thử lại.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const formatCurrency = (amount) => {
-    return new Intl.NumberFormat("vi-VN").format(amount) + "₫"
-  }
+    return new Intl.NumberFormat("vi-VN").format(amount) + "₫";
+  };
 
-  // Tính tổng tiền
   const calculateTotal = () => {
-    return selectedProducts.reduce((total, item) => total + item.giaTienSo * item.soLuong, 0)
-  }
+    return cartItems.reduce((total, item) => total + item.giaTien * item.quantity, 0);
+  };
 
-  // Tính phí vận chuyển
-  const shippingFee = calculateTotal() >= 500000 ? 0 : 30000
+  const shippingFee = calculateTotal() >= 500000 ? 0 : 30000;
 
-  if (selectedProducts.length === 0) {
+  if (!currentUser) {
     return (
       <>
         <Navbar />
         <div className="max-w-7xl mx-auto px-4 py-12">
           <div className="text-center py-12 bg-white rounded-lg shadow-sm">
-            <h2 className="text-2xl font-bold mb-4">Vui lòng chọn sản phẩm để thanh toán</h2>
-            <p className="text-gray-500 mb-6">Bạn chưa chọn sản phẩm nào để thanh toán</p>
+            <h2 className="text-2xl font-bold mb-4">Vui lòng đăng nhập</h2>
+            <p className="text-gray-500 mb-6">Bạn cần đăng nhập để tiến hành thanh toán</p>
+            <Link to="/login" className="bg-red-600 text-white px-6 py-2 rounded hover:bg-red-700">
+              Đăng nhập ngay
+            </Link>
+          </div>
+        </div>
+        <Footer />
+      </>
+    );
+  }
+
+  if (cartItems.length === 0) {
+    return (
+      <>
+        <Navbar />
+        <div className="max-w-7xl mx-auto px-4 py-12">
+          <div className="text-center py-12 bg-white rounded-lg shadow-sm">
+            <h2 className="text-2xl font-bold mb-4">Giỏ hàng của bạn đang trống</h2>
+            <p className="text-gray-500 mb-6">Vui lòng chọn sản phẩm để thanh toán</p>
             <Link to="/cart" className="bg-red-600 text-white px-6 py-2 rounded hover:bg-red-700">
               Quay lại giỏ hàng
             </Link>
@@ -109,7 +190,7 @@ const Checkout = () => {
         </div>
         <Footer />
       </>
-    )
+    );
   }
 
   return (
@@ -117,6 +198,8 @@ const Checkout = () => {
       <Navbar />
       <div className="max-w-7xl mx-auto px-4 py-8">
         <h1 className="text-2xl font-bold mb-6">Thanh toán</h1>
+
+        {error && <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded mb-6">{error}</div>}
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2">
@@ -294,17 +377,17 @@ const Checkout = () => {
                 </div>
 
                 <div className="space-y-3">
-                  {selectedProducts.map((item) => (
-                    <div key={item.id} className="flex justify-between">
+                  {cartItems.map((item) => (
+                    <div key={item.idProduct} className="flex justify-between">
                       <div>
                         <span className="font-medium line-clamp-1">{item.tenSanPham}</span>
                         <div className="text-sm text-gray-500">
                           <span>Màu: {item.mauSac}</span>
                           <span className="mx-1">×</span>
-                          <span>{item.soLuong}</span>
+                          <span>{item.quantity}</span>
                         </div>
                       </div>
-                      <span className="font-medium">{formatCurrency(item.giaTienSo * item.soLuong)}</span>
+                      <span className="font-medium">{formatCurrency(item.giaTien * item.quantity)}</span>
                     </div>
                   ))}
                 </div>
@@ -329,9 +412,12 @@ const Checkout = () => {
               <button
                 type="submit"
                 onClick={handleSubmit}
-                className="w-full bg-red-600 text-white py-3 rounded font-medium mt-6 hover:bg-red-700"
+                disabled={loading}
+                className={`w-full py-3 rounded font-medium mt-6 ${
+                  loading ? "bg-gray-400 text-white cursor-not-allowed" : "bg-red-600 hover:bg-red-700 text-white"
+                }`}
               >
-                ĐẶT HÀNG
+                {loading ? "ĐANG XỬ LÝ..." : "ĐẶT HÀNG"}
               </button>
 
               <p className="text-sm text-gray-500 mt-4">
@@ -343,7 +429,7 @@ const Checkout = () => {
       </div>
       <Footer />
     </>
-  )
-}
+  );
+};
 
-export default Checkout
+export default Checkout;

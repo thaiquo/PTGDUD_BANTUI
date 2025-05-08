@@ -1,7 +1,8 @@
+// client/src/pages/Cart.jsx
 "use client"
 
-import { useState, useEffect } from "react"
-import { Link } from "react-router-dom"
+import { useState, useEffect, useContext } from "react" // Import useContext
+import { Link, useNavigate } from "react-router-dom"
 import Navbar from "../components/Navbar"
 import Footer from "../components/Footer"
 import {
@@ -13,108 +14,173 @@ import {
   ArrowPathIcon,
   PhoneIcon,
 } from "@heroicons/react/24/outline"
+import { ProductContext } from "../context/ProductProvider" // Import ProductContext
 
 const Cart = () => {
-  const [cartItems, setCartItems] = useState([])
+  const navigate = useNavigate()
+  const {
+    currentUser,
+    cart: contextCart,
+    fetchCart,
+    removeFromCart: removeFromCartContext,
+    updateCartQuantity: updateCartQuantityContext,
+    products,
+  } = useContext(ProductContext)
+
   const [loading, setLoading] = useState(true)
+  const [cartItems, setCartItems] = useState([])
   const [selectedItems, setSelectedItems] = useState({})
+  const [error, setError] = useState(null)
 
-  // Lấy dữ liệu giỏ hàng từ localStorage
+  // In the useEffect hook that fetches cart data, we need to fix the dependency array and add a flag to prevent infinite loops
+
+  // Replace the existing useEffect for loading cart with this version:
   useEffect(() => {
-    const loadCart = () => {
-      try {
-        const savedCart = localStorage.getItem("cart")
-        if (savedCart) {
-          const parsedCart = JSON.parse(savedCart)
-          setCartItems(parsedCart)
+    let isMounted = true
 
-          // Mặc định chọn tất cả sản phẩm
-          const initialSelected = {}
-          parsedCart.forEach((item) => {
-            initialSelected[item.id] = true
-          })
-          setSelectedItems(initialSelected)
+    const loadCart = async () => {
+      if (!currentUser) {
+        return
+      }
+
+      setLoading(true)
+      try {
+        // Fetch cart from server
+        const cartData = await fetchCart()
+
+        if (isMounted) {
+          // Process cart data to include product details
+          if (products && products.length > 0) {
+            const processedCart = cartData
+              .map((item) => {
+                const product = products.find((p) => String(p.id) === String(item.idProduct))
+                if (!product) return null
+
+                // Get the first color's first image as default
+                const defaultImage = product.mauSac?.[0]?.hinhAnh?.[0]?.img || "/placeholder.svg"
+
+                return {
+                  ...item,
+                  tenSanPham: product.tenSanPham,
+                  giaTien: Number.parseInt(String(product.giaTien).replace(/\D/g, "")),
+                  hinhAnh: defaultImage,
+                  mauSac: product.mauSac?.[0]?.mau || "Mặc định",
+                }
+              })
+              .filter(Boolean) // Remove any null items
+
+            setCartItems(processedCart)
+
+            // Initialize all items as selected
+            const initialSelected = {}
+            processedCart.forEach((item) => {
+              initialSelected[item.idProduct] = true
+            })
+            setSelectedItems(initialSelected)
+          }
+          setError(null)
         }
-        setLoading(false)
-      } catch (error) {
-        console.error("Lỗi khi đọc giỏ hàng từ localStorage:", error)
-        setCartItems([])
-        setLoading(false)
+      } catch (err) {
+        console.error("Error loading cart:", err)
+        if (isMounted) {
+          setError("Không thể tải giỏ hàng. Vui lòng thử lại sau.")
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false)
+        }
       }
     }
 
     loadCart()
-  }, [])
 
-  // Lưu giỏ hàng vào localStorage khi có thay đổi
-  useEffect(() => {
-    if (!loading) {
-      localStorage.setItem("cart", JSON.stringify(cartItems))
+    // Cleanup function to prevent state updates after unmount
+    return () => {
+      isMounted = false
     }
-  }, [cartItems, loading])
+  }, [currentUser, products]) // Only depend on currentUser and products, not fetchCart
 
-  // Tính tổng tiền của các sản phẩm đã chọn
+  // Remove the separate processCartItems function since we've integrated it directly into the useEffect
+
+  // Calculate total price of selected items
   const calculateTotal = () => {
     return cartItems.reduce((total, item) => {
-      if (selectedItems[item.id]) {
-        return total + item.giaTienSo * item.soLuong
+      if (selectedItems[item.idProduct]) {
+        return total + item.giaTien * item.quantity
       }
       return total
     }, 0)
   }
 
-  // Định dạng số tiền
+  // Format currency
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat("vi-VN").format(amount) + "₫"
   }
 
-  // Xử lý chọn/bỏ chọn tất cả sản phẩm
+  // Handle select/deselect all products
   const handleSelectAll = (isSelected) => {
     const newSelectedItems = {}
     cartItems.forEach((item) => {
-      newSelectedItems[item.id] = isSelected
+      newSelectedItems[item.idProduct] = isSelected
     })
     setSelectedItems(newSelectedItems)
   }
 
-  // Xử lý chọn/bỏ chọn một sản phẩm
-  const handleSelectItem = (id, isSelected) => {
+  // Handle select/deselect one product
+  const handleSelectItem = (idProduct, isSelected) => {
     setSelectedItems((prev) => ({
       ...prev,
-      [id]: isSelected,
+      [idProduct]: isSelected,
     }))
   }
 
-  // Xử lý thay đổi số lượng
-  const handleQuantityChange = (id, type) => {
-    setCartItems((prev) =>
-      prev.map((item) => {
-        if (item.id === id) {
-          if (type === "increase") {
-            return { ...item, soLuong: item.soLuong + 1 }
-          } else if (type === "decrease" && item.soLuong > 1) {
-            return { ...item, soLuong: item.soLuong - 1 }
-          }
-        }
-        return item
-      }),
-    )
+  // Handle quantity change
+  const handleQuantityChange = async (idProduct, type) => {
+    const itemToUpdate = cartItems.find((item) => item.idProduct === idProduct)
+    if (itemToUpdate) {
+      const newQuantity = type === "increase" ? itemToUpdate.quantity + 1 : Math.max(1, itemToUpdate.quantity - 1)
+
+      setLoading(true)
+      try {
+        await updateCartQuantityContext(idProduct, newQuantity)
+        // Update local state immediately for better UX
+        setCartItems((prev) =>
+          prev.map((item) => (item.idProduct === idProduct ? { ...item, quantity: newQuantity } : item)),
+        )
+      } catch (err) {
+        console.error("Error updating quantity:", err)
+        setError("Không thể cập nhật số lượng. Vui lòng thử lại.")
+      } finally {
+        setLoading(false)
+      }
+    }
   }
 
-  // Xử lý xóa sản phẩm
-  const handleRemoveItem = (id) => {
-    setCartItems((prev) => prev.filter((item) => item.id !== id))
-    setSelectedItems((prev) => {
-      const newSelectedItems = { ...prev }
-      delete newSelectedItems[id]
-      return newSelectedItems
-    })
+  // Handle remove item
+  const handleRemoveItem = async (idProduct) => {
+    setLoading(true)
+    try {
+      await removeFromCartContext(idProduct)
+      // Update local state immediately for better UX
+      setCartItems((prev) => prev.filter((item) => item.idProduct !== idProduct))
+      // Also update selected items
+      setSelectedItems((prev) => {
+        const updated = { ...prev }
+        delete updated[idProduct]
+        return updated
+      })
+    } catch (err) {
+      console.error("Error removing item:", err)
+      setError("Không thể xóa sản phẩm. Vui lòng thử lại.")
+    } finally {
+      setLoading(false)
+    }
   }
 
-  // Kiểm tra xem tất cả sản phẩm có được chọn không
-  const isAllSelected = cartItems.length > 0 && cartItems.every((item) => selectedItems[item.id])
+  // Check if all products are selected
+  const isAllSelected = cartItems.length > 0 && cartItems.every((item) => selectedItems[item.idProduct])
 
-  // Kiểm tra xem có sản phẩm nào được chọn không
+  // Check if any items are selected
   const hasSelectedItems = Object.values(selectedItems).some((value) => value)
 
   if (loading) {
@@ -123,6 +189,45 @@ const Cart = () => {
         <Navbar />
         <div className="min-h-screen flex items-center justify-center">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-red-600" />
+        </div>
+        <Footer />
+      </>
+    )
+  }
+
+  if (!currentUser) {
+    return (
+      <>
+        <Navbar />
+        <div className="min-h-screen flex flex-col items-center justify-center p-4">
+          <div className="text-center py-12 bg-white rounded-lg shadow-sm max-w-md w-full">
+            <ShoppingBagIcon className="h-12 w-12 text-red-600 mx-auto mb-4" />
+            <h2 className="text-xl font-bold mb-2">Vui lòng đăng nhập</h2>
+            <p className="text-gray-500 mb-6">Bạn cần đăng nhập để xem giỏ hàng của mình</p>
+            <Link to="/login" className="bg-red-600 text-white px-6 py-2 rounded hover:bg-red-700">
+              Đăng nhập ngay
+            </Link>
+          </div>
+        </div>
+        <Footer />
+      </>
+    )
+  }
+
+  if (error) {
+    return (
+      <>
+        <Navbar />
+        <div className="min-h-screen flex items-center justify-center p-4">
+          <div className="text-center py-12 bg-white rounded-lg shadow-sm max-w-md w-full">
+            <p className="text-red-600 mb-4">{error}</p>
+            <button
+              onClick={() => window.location.reload()}
+              className="bg-red-600 text-white px-6 py-2 rounded hover:bg-red-700"
+            >
+              Thử lại
+            </button>
+          </div>
         </div>
         <Footer />
       </>
@@ -173,13 +278,13 @@ const Cart = () => {
 
                 <div className="divide-y">
                   {cartItems.map((item) => (
-                    <div key={item.id} className="py-4">
+                    <div key={item.idProduct} className="py-4">
                       <div className="grid grid-cols-12 gap-2 items-center">
                         <div className="col-span-1">
                           <input
                             type="checkbox"
-                            checked={selectedItems[item.id] || false}
-                            onChange={(e) => handleSelectItem(item.id, e.target.checked)}
+                            checked={selectedItems[item.idProduct] || false}
+                            onChange={(e) => handleSelectItem(item.idProduct, e.target.checked)}
                             className="w-5 h-5 text-red-600"
                           />
                         </div>
@@ -196,7 +301,7 @@ const Cart = () => {
                               <h3 className="text-sm font-medium line-clamp-2">{item.tenSanPham}</h3>
                               <p className="text-xs text-gray-500 mt-1">Màu: {item.mauSac}</p>
                               <button
-                                onClick={() => handleRemoveItem(item.id)}
+                                onClick={() => handleRemoveItem(item.idProduct)}
                                 className="text-sm text-gray-500 hover:text-red-600 mt-2 flex items-center gap-1"
                               >
                                 <TrashIcon className="h-4 w-4" />
@@ -206,25 +311,25 @@ const Cart = () => {
                           </div>
                         </div>
                         <div className="col-span-6 md:col-span-2 text-center">
-                          <div className="font-medium">{item.giaTien}</div>
-                          {item.giaGoc && <div className="text-sm text-gray-500 line-through">{item.giaGoc}</div>}
+                          <div className="font-medium">{formatCurrency(item.giaTien)}</div>
                         </div>
                         <div className="col-span-6 md:col-span-2">
                           <div className="flex items-center justify-center">
                             <button
-                              onClick={() => handleQuantityChange(item.id, "decrease")}
+                              onClick={() => handleQuantityChange(item.idProduct, "decrease")}
                               className="w-8 h-8 flex items-center justify-center border rounded-l"
+                              disabled={item.quantity <= 1}
                             >
                               <MinusIcon className="h-3 w-3" />
                             </button>
                             <input
                               type="text"
-                              value={item.soLuong}
+                              value={item.quantity}
                               readOnly
                               className="w-10 h-8 text-center border-y"
                             />
                             <button
-                              onClick={() => handleQuantityChange(item.id, "increase")}
+                              onClick={() => handleQuantityChange(item.idProduct, "increase")}
                               className="w-8 h-8 flex items-center justify-center border rounded-r"
                             >
                               <PlusIcon className="h-3 w-3" />
@@ -232,7 +337,7 @@ const Cart = () => {
                           </div>
                         </div>
                         <div className="col-span-12 md:col-span-2 text-center md:text-right font-medium text-red-600">
-                          {formatCurrency(item.giaTienSo * item.soLuong)}
+                          {formatCurrency(item.giaTien * item.quantity)}
                         </div>
                       </div>
                     </div>
@@ -254,17 +359,25 @@ const Cart = () => {
 
                 <div className="text-sm italic text-gray-500 my-3">Bạn có thể nhập mã giảm giá ở trang thanh toán</div>
 
-                <Link
-                  to="/checkout"
+                <button
+                  onClick={() => {
+                    if (hasSelectedItems) {
+                      // Get selected items
+                      const selectedCartItems = cartItems.filter((item) => selectedItems[item.idProduct])
+                      // Store in sessionStorage for checkout page
+                      sessionStorage.setItem("checkoutItems", JSON.stringify(selectedCartItems))
+                      navigate("/checkout")
+                    }
+                  }}
                   className={`block w-full py-3 mb-3 rounded font-medium text-center ${
                     hasSelectedItems
                       ? "bg-red-600 hover:bg-red-700 text-white"
                       : "bg-gray-300 text-gray-500 cursor-not-allowed"
                   }`}
-                  onClick={(e) => !hasSelectedItems && e.preventDefault()}
+                  disabled={!hasSelectedItems}
                 >
                   TIẾN HÀNH ĐẶT HÀNG
-                </Link>
+                </button>
 
                 <Link
                   to="/"

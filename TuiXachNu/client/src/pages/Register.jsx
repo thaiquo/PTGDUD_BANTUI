@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { ProductContext } from '../context/ProductProvider';
 import logo from "/src/assets/Logo.jpg";  // thay đúng path logo của bạn
 
 function Register() {
@@ -8,43 +9,27 @@ function Register() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
-  const navigate = useNavigate();
 
+  const { register, authError, registerSuccess } = useContext(ProductContext);
+  const navigate = useNavigate();
   const handleSubmit = async (event) => {
     event.preventDefault();
     setError('');
-
+  
     if (password !== confirmPassword) {
       setError('Mật khẩu không khớp');
       return;
     }
-
-    try {
-      const checkResponse = await fetch(`http://localhost:3001/users?username=${username}`);
-      const existingUsers = await checkResponse.json();
-
-      if (existingUsers.length > 0) {
-        setError('Tên đăng nhập đã tồn tại');
-        return;
-      }
-
-      const newUser = { username, email, password, roles: ['user'] };
-      const response = await fetch(`http://localhost:3001/users`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newUser),
-      });
-
-      if (response.ok) {
-        navigate('/login');
-      } else {
-        setError('Đăng ký thất bại');
-      }
-    } catch (err) {
-      console.error('Lỗi kết nối:', err);
-      setError('Không thể kết nối đến máy chủ');
+  
+    await register({ username, email, password, roles: ['user'] });
+  
+    if (authError) {
+      setError(authError);
+    } else {
+      navigate('/login');
     }
   };
+  
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-red-100 via-white to-pink-100">
@@ -57,7 +42,11 @@ function Register() {
           />
           <h2 className="text-2xl font-semibold text-gray-800 mt-4">Tạo Tài Khoản Mới</h2>
         </div>
-        {error && <p className="text-red-500 text-sm mb-4 text-center">{error}</p>}
+        {(error || authError || registerSuccess) && (
+          <p className={`text-sm mb-4 text-center ${error || authError ? 'text-red-500' : 'text-green-600'}`}>
+            {error || authError || registerSuccess}
+          </p>
+        )}
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label className="block text-sm font-medium mb-1">Tên đăng nhập</label>
