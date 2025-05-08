@@ -139,7 +139,18 @@ const Footer = () => {
             allowFullScreen=""
             loading="lazy"
           ></iframe>
+          
         </div>
+{/* <div className="map-container">
+  <iframe
+    className="w-full h-64 rounded-lg shadow-md"
+    src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d14185.434297991354!2d106...!1svi!2s"
+    title="Shop Location"
+    allowFullScreen=""
+    loading="lazy"
+  ></iframe>
+</div> */}
+
       </div>
     </div>
 
