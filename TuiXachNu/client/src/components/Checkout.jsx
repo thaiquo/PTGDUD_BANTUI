@@ -111,7 +111,7 @@ const Checkout = () => {
 
       // Send order to server
       const API_BASE =
-        process.env.NODE_ENV === "development" ? "http://localhost:3000" : "https://ptgud-tv-store-react.onrender.com";
+        process.env.NODE_ENV === "development" ? "http://localhost:3000" : "https://ptgdud-bantui.onrender.com";
       const response = await fetch(`${API_BASE}/api/create-order`, {
         method: "POST",
         headers: {
