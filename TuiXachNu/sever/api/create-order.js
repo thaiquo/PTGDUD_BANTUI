@@ -46,41 +46,45 @@ const createOrder = async (req, res) => {
       return res.status(404).json({ error: "Không tìm thấy người dùng" });
     }
 
-    // Generate order ID based on current date and time (ddMMyyyyHHmm)
+    // Tính thời gian theo múi giờ Việt Nam (UTC+7)
     const now = new Date();
-    const orderid = `${String(now.getDate()).padStart(2, "0")}${String(
-      now.getMonth() + 1
-    ).padStart(2, "0")}${now.getFullYear()}${String(now.getHours()).padStart(
+    const vietnamTime = new Date(now.getTime() + 7 * 60 * 60 * 1000);
+
+    // Format orderid theo ddMMyyyyHHmm
+    const orderid = `${String(vietnamTime.getDate()).padStart(2, "0")}${String(
+      vietnamTime.getMonth() + 1
+    ).padStart(2, "0")}${vietnamTime.getFullYear()}${String(vietnamTime.getHours()).padStart(
       2,
       "0"
-    )}${String(now.getMinutes()).padStart(2, "0")}`;
+    )}${String(vietnamTime.getMinutes()).padStart(2, "0")}`;
 
-    // Create new order (removed status and createdAt)
+    // Đơn hàng mới
     const newOrder = {
       orderid,
       nameorder: shippingInfo.fullName,
       phone: shippingInfo.phone,
       listorder: items,
+      createdAt: vietnamTime.toISOString(), // Lưu timestamp chuẩn ISO
     };
 
-    // Initialize order array if it doesn't exist
+    // Nếu chưa có mảng order thì tạo mới
     if (!document.users[userIndex].order) {
       document.users[userIndex].order = [];
     }
 
-    // Add new order to user's order array
+    // Thêm đơn hàng mới vào đầu danh sách
     document.users[userIndex].order.unshift(newOrder);
 
-    // Remove ordered items from cart
+    // Xóa các sản phẩm đã đặt khỏi giỏ hàng
     const itemIds = items.map((item) => item.idProduct);
     if (!document.users[userIndex].cart) {
-      document.users[userIndex].cart = []; // Initialize cart if it doesn't exist
+      document.users[userIndex].cart = [];
     }
     document.users[userIndex].cart = document.users[userIndex].cart.filter(
       (item) => !itemIds.includes(item.idProduct)
     );
 
-    // Update document in MongoDB
+    // Cập nhật dữ liệu trên MongoDB
     const updateResult = await collection.updateOne(
       { _id: document._id },
       { $set: { users: document.users } }
