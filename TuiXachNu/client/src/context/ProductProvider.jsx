@@ -18,7 +18,7 @@ const ProductProvider = ({ children }) => {
   const API_BASE =
     process.env.NODE_ENV === "development"
       ? "http://localhost:3000"
-      : "https://ptgud-tv-store-react.onrender.com";
+      : "https://ptgdud-bantui.onrender.com";
 
   const apiURL = `${API_BASE}/api/db.json`;
 
