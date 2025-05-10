@@ -1,3 +1,4 @@
+// client/src/pages/Checkout.jsx
 "use client"
 
 import { useState, useEffect, useContext } from "react";
@@ -90,10 +91,11 @@ const Checkout = () => {
     setError(null);
 
     try {
-      // Format items for the order
+      // Format items for the order, bao gồm cả giá từ cartItems
       const orderItems = cartItems.map((item) => ({
         idProduct: item.idProduct,
         quantity: item.quantity,
+        price: item.giaTien, // Lấy giá từ cartItems (đã có giá chiết khấu)
       }));
 
       // Create shipping info object

@@ -60,45 +60,45 @@ const ProductDetail = () => {
     setSelectedColor(color)
   }
 
-  const handleAddToCart = async () => {
-    if (!currentUser) {
-      setCartMessage({ type: "error", text: "Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng." })
-      return
-    }
+const handleAddToCart = async () => {
+  if (!currentUser) {
+    setCartMessage({ type: "error", text: "Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng." });
+    return;
+  }
 
-    if (product && product.mauSac?.length > 0 && !selectedColor) {
-      setCartMessage({ type: "error", text: "Vui lòng chọn màu sắc sản phẩm." })
-      return
-    }
+  if (product && product.mauSac?.length > 0 && !selectedColor) {
+    setCartMessage({ type: "error", text: "Vui lòng chọn màu sắc sản phẩm." });
+    return;
+  }
 
-    if (product && selectedColor) {
-      try {
-        setAddingToCart(true)
-        setCartMessage(null)
+  if (product && selectedColor) {
+    try {
+      setAddingToCart(true);
+      setCartMessage(null);
 
-        const cartItem = {
-          idProduct: String(product.id),
-          quantity: quantity,
-        }
+      const cartItem = {
+        idProduct: String(product.id),
+        quantity: quantity,
+      };
 
-        const result = await addToCartContext(cartItem)
+      const result = await addToCartContext(cartItem);
 
-        if (result.success) {
-          setCartMessage({
-            type: "success",
-            text: `Đã thêm ${quantity} sản phẩm "${product.tenSanPham}" màu "${selectedColor.mau}" vào giỏ hàng!`,
-          })
-        } else {
-          setCartMessage({ type: "error", text: result.message || "Không thể thêm sản phẩm vào giỏ hàng." })
-        }
-      } catch (error) {
-        console.error("Error adding to cart:", error)
-        setCartMessage({ type: "error", text: "Đã xảy ra lỗi khi thêm vào giỏ hàng." })
-      } finally {
-        setAddingToCart(false)
+      if (result.success) {
+        setCartMessage({
+          type: "success",
+          text: `Đã thêm ${quantity} sản phẩm "${product.tenSanPham}" màu "${selectedColor.mau}" vào giỏ hàng!`,
+        });
+      } else {
+        setCartMessage({ type: "error", text: result.message || "Không thể thêm sản phẩm vào giỏ hàng." });
       }
+    } catch (error) {
+      console.error("Error adding to cart:", error);
+      setCartMessage({ type: "error", text: "Đã xảy ra lỗi khi thêm vào giỏ hàng." });
+    } finally {
+      setAddingToCart(false);
     }
   }
+};
 
   if (contextLoading) {
     return (

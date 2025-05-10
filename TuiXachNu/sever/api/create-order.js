@@ -1,3 +1,4 @@
+// pages/api/create-order.js
 import dotenv from "dotenv";
 dotenv.config();
 import { MongoClient, ServerApiVersion } from "mongodb";
@@ -5,7 +6,7 @@ import { MongoClient, ServerApiVersion } from "mongodb";
 const uri = process.env.MONGODB_URI;
 const client = new MongoClient(uri, {
   serverApi: {
-    version: ServerApiVersion.v1,
+    version: "1",
     strict: true,
     deprecationErrors: true,
   },
@@ -58,12 +59,16 @@ const createOrder = async (req, res) => {
       "0"
     )}${String(vietnamTime.getMinutes()).padStart(2, "0")}`;
 
-    // Đơn hàng mới
+    // Đơn hàng mới, lưu trữ cả giá từ client gửi lên
     const newOrder = {
       orderid,
       nameorder: shippingInfo.fullName,
       phone: shippingInfo.phone,
-      listorder: items,
+      listorder: items.map((item) => ({
+        idProduct: item.idProduct,
+        quantity: item.quantity,
+        price: item.price, // Giá từ client
+      })),
       createdAt: vietnamTime.toISOString(), // Lưu timestamp chuẩn ISO
     };
 
@@ -103,6 +108,8 @@ const createOrder = async (req, res) => {
   } catch (err) {
     console.error("❌ Lỗi tạo đơn hàng:", err);
     return res.status(500).json({ error: "Lỗi ghi dữ liệu MongoDB: " + err.message });
+  } finally {
+    await client.close(); // **QUAN TRỌNG: Đóng kết nối client**
   }
 };
 

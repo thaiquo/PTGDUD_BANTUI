@@ -1,7 +1,7 @@
 // client/src/pages/Cart.jsx
 "use client"
 
-import { useState, useEffect, useContext } from "react" // Import useContext
+import { useState, useEffect, useContext, useCallback } from "react" // Import useCallback
 import { Link, useNavigate } from "react-router-dom"
 import Navbar from "../components/Navbar"
 import Footer from "../components/Footer"
@@ -32,75 +32,71 @@ const Cart = () => {
   const [selectedItems, setSelectedItems] = useState({})
   const [error, setError] = useState(null)
 
-  // In the useEffect hook that fetches cart data, we need to fix the dependency array and add a flag to prevent infinite loops
+  const loadCart = useCallback(async () => {
+    if (!currentUser) {
+      return
+    }
 
-  // Replace the existing useEffect for loading cart with this version:
+    setLoading(true)
+    try {
+      const cartData = await fetchCart()
+
+      if (products && products.length > 0) {
+        const processedCart = cartData
+          .map((item) => {
+            const product = products.find((p) => String(p.id) === String(item.idProduct))
+            if (!product) return null
+
+            const defaultImage = product.mauSac?.[0]?.hinhAnh?.[0]?.img || "/placeholder.svg"
+
+            return {
+              ...item,
+              idProduct: item.idProduct,
+              quantity: item.quantity,
+              tenSanPham: product.tenSanPham,
+              giaTien: item.price,
+              hinhAnh: defaultImage,
+              mauSac: product.mauSac?.[0]?.mau || "Mặc định",
+            }
+          })
+          .filter(Boolean)
+
+        setCartItems(processedCart)
+
+        const initialSelected = {}
+        processedCart.forEach((item) => {
+          initialSelected[item.idProduct] = true
+        })
+        setSelectedItems(initialSelected)
+      }
+      setError(null)
+    } catch (err) {
+      console.error("Error loading cart:", err)
+      setError("Không thể tải giỏ hàng. Vui lòng thử lại sau.")
+    } finally {
+      setLoading(false)
+    }
+  }, [currentUser, products, fetchCart])
+
   useEffect(() => {
     let isMounted = true
 
-    const loadCart = async () => {
-      if (!currentUser) {
-        return
-      }
-
-      setLoading(true)
-      try {
-        // Fetch cart from server
-        const cartData = await fetchCart()
-
-        if (isMounted) {
-          // Process cart data to include product details
-          if (products && products.length > 0) {
-            const processedCart = cartData
-              .map((item) => {
-                const product = products.find((p) => String(p.id) === String(item.idProduct))
-                if (!product) return null
-
-                // Get the first color's first image as default
-                const defaultImage = product.mauSac?.[0]?.hinhAnh?.[0]?.img || "/placeholder.svg"
-
-                return {
-                  ...item,
-                  tenSanPham: product.tenSanPham,
-                  giaTien: Number.parseInt(String(product.giaTien).replace(/\D/g, "")),
-                  hinhAnh: defaultImage,
-                  mauSac: product.mauSac?.[0]?.mau || "Mặc định",
-                }
-              })
-              .filter(Boolean) // Remove any null items
-
-            setCartItems(processedCart)
-
-            // Initialize all items as selected
-            const initialSelected = {}
-            processedCart.forEach((item) => {
-              initialSelected[item.idProduct] = true
-            })
-            setSelectedItems(initialSelected)
-          }
-          setError(null)
-        }
-      } catch (err) {
-        console.error("Error loading cart:", err)
-        if (isMounted) {
-          setError("Không thể tải giỏ hàng. Vui lòng thử lại sau.")
-        }
-      } finally {
+    loadCart()
+      .then(() => {
         if (isMounted) {
           setLoading(false)
         }
-      }
-    }
+      })
+      .catch(() => {
+        if (isMounted) {
+          setLoading(false)
+        }
+      })
 
-    loadCart()
-
-    // Cleanup function to prevent state updates after unmount
     return () => {
       isMounted = false
     }
-  }, [currentUser, products]) // Only depend on currentUser and products, not fetchCart
-
-  // Remove the separate processCartItems function since we've integrated it directly into the useEffect
+  }, [currentUser, loadCart]) // Chỉ phụ thuộc vào currentUser và loadCart (đã memoize)
 
   // Calculate total price of selected items
   const calculateTotal = () => {
@@ -143,7 +139,6 @@ const Cart = () => {
       setLoading(true)
       try {
         await updateCartQuantityContext(idProduct, newQuantity)
-        // Update local state immediately for better UX
         setCartItems((prev) =>
           prev.map((item) => (item.idProduct === idProduct ? { ...item, quantity: newQuantity } : item)),
         )
@@ -161,9 +156,7 @@ const Cart = () => {
     setLoading(true)
     try {
       await removeFromCartContext(idProduct)
-      // Update local state immediately for better UX
       setCartItems((prev) => prev.filter((item) => item.idProduct !== idProduct))
-      // Also update selected items
       setSelectedItems((prev) => {
         const updated = { ...prev }
         delete updated[idProduct]

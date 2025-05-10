@@ -1,5 +1,5 @@
 "use client";
-import { createContext, useState, useEffect } from "react";
+import { createContext, useState, useEffect, useCallback } from "react";
 import axios from "axios";
 
 export const ProductContext = createContext();
@@ -99,7 +99,7 @@ const ProductProvider = ({ children }) => {
   };
 
   // Fetch Cart
-  const fetchCart = async () => {
+  const fetchCart = useCallback(async () => {
     if (!currentUser) return [];
     try {
       const res = await axios.get(`${API_BASE}/api/cart/${currentUser.id}`);
@@ -110,18 +110,31 @@ const ProductProvider = ({ children }) => {
       setCart([]);
       return [];
     }
-  };
+  }, [currentUser]);
 
   // Add to Cart
-  const addToCart = async (cartItem) => {
+  const addToCart = useCallback(async (cartItem) => {
     if (!currentUser) {
       return { success: false, message: "Vui lòng đăng nhập để thêm vào giỏ hàng." };
     }
+
     try {
+      const product = products.find(p => Number(p.id) === Number(cartItem.idProduct));
+      if (!product) {
+        return { success: false, message: "Sản phẩm không tồn tại." };
+      }
+
+      const originalPrice = Number(product.giaTien.replace(/[₫,.]/g, ""));
+      const discountedPrice = product.trangThai === 0
+        ? Math.round(originalPrice * 0.9)
+        : originalPrice;
+
       const simplifiedCartItem = {
         idProduct: String(cartItem.idProduct),
         quantity: Number(cartItem.quantity),
+        price: discountedPrice
       };
+
       const response = await axios.post(`${API_BASE}/api/addtocart/${currentUser.id}`, simplifiedCartItem);
       await fetchCart();
       return { success: true, message: response.data.message };
@@ -131,10 +144,10 @@ const ProductProvider = ({ children }) => {
         message: error.response?.data?.message || "Lỗi khi thêm vào giỏ hàng.",
       };
     }
-  };
+  }, [currentUser, products, fetchCart]);
 
   // Remove from Cart
-  const removeFromCart = async (productId) => {
+  const removeFromCart = useCallback(async (productId) => {
     if (!currentUser) return { success: false, message: "Vui lòng đăng nhập để xóa khỏi giỏ hàng." };
     try {
       const response = await axios.delete(`${API_BASE}/api/deletecart/${currentUser.id}`, {
@@ -148,10 +161,10 @@ const ProductProvider = ({ children }) => {
         message: error.response?.data?.message || "Lỗi khi xóa khỏi giỏ hàng.",
       };
     }
-  };
+  }, [currentUser, fetchCart]);
 
   // Update Cart Quantity
-  const updateCartQuantity = async (productId, quantity) => {
+  const updateCartQuantity = useCallback(async (productId, quantity) => {
     if (!currentUser) return { success: false, message: "Vui lòng đăng nhập để cập nhật giỏ hàng." };
     try {
       const response = await axios.put(`${API_BASE}/api/updatecart/${currentUser.id}`, {
@@ -166,10 +179,10 @@ const ProductProvider = ({ children }) => {
         message: error.response?.data?.message || "Lỗi khi cập nhật giỏ hàng.",
       };
     }
-  };
+  }, [currentUser, fetchCart]);
 
   // Fetch Orders
-  const fetchOrders = async () => {
+  const fetchOrders = useCallback(async () => {
     if (!currentUser) return [];
     try {
       const res = await axios.get(`${API_BASE}/api/orders/${currentUser.id}`);
@@ -178,14 +191,14 @@ const ProductProvider = ({ children }) => {
       console.error("❌ Lỗi tải lịch sử đơn hàng:", err);
       return [];
     }
-  };
+  }, [currentUser]);
 
   // Sync cart when login
   useEffect(() => {
     if (currentUser) {
       fetchCart();
     }
-  }, [currentUser]);
+  }, [currentUser, fetchCart]); // fetchCart is now stable
 
   return (
     <ProductContext.Provider

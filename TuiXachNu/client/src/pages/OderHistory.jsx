@@ -1,3 +1,4 @@
+// client/src/pages/OrderHistory.jsx
 "use client"
 
 import { useState, useEffect, useContext } from "react"
@@ -56,25 +57,23 @@ const OrderHistory = () => {
     return `${day}/${month}/${year} ${hour}:${minute}`
   }
 
-  // Get product details from product ID
+  // Get product details from product ID (chỉ dùng để lấy tên và hình ảnh)
   const getProductDetails = (productId) => {
     const product = products?.find((p) => String(p.id) === String(productId))
-    if (!product) return { tenSanPham: "Sản phẩm không tồn tại", giaTien: 0, hinhAnh: null }
+    if (!product) return { tenSanPham: "Sản phẩm không tồn tại", hinhAnh: null }
 
     return {
       tenSanPham: product.tenSanPham,
-      giaTien: Number.parseInt(String(product.giaTien).replace(/\D/g, "")),
       hinhAnh: product.mauSac?.[0]?.hinhAnh?.[0]?.img || "/placeholder.svg",
     }
   }
 
-  // Calculate order total
+  // Calculate order total (sử dụng giá đã lưu trong đơn hàng)
   const calculateOrderTotal = (items) => {
     return items.reduce((total, item) => {
-      const product = getProductDetails(item.idProduct)
-      return total + product.giaTien * item.quantity
-    }, 0)
-  }
+      return total + item.price * item.quantity;
+    }, 0);
+  };
 
   if (loading) {
     return (
@@ -193,11 +192,11 @@ const OrderHistory = () => {
                           <div className="flex-grow">
                             <h3 className="font-medium">{product.tenSanPham}</h3>
                             <div className="text-sm text-gray-500 mt-1">Số lượng: {item.quantity}</div>
-                            <div className="text-sm font-medium mt-1">{formatCurrency(product.giaTien)} / sản phẩm</div>
+                            <div className="text-sm font-medium mt-1">{formatCurrency(item.price)} / sản phẩm</div>
                           </div>
                           <div className="text-right">
                             <div className="font-medium text-red-600">
-                              {formatCurrency(product.giaTien * item.quantity)}
+                              {formatCurrency(item.price * item.quantity)}
                             </div>
                           </div>
                         </div>
