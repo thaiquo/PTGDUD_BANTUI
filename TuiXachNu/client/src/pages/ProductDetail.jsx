@@ -48,7 +48,7 @@ const ProductDetail = () => {
         setSelectedColor(null)
       }
     }
-    window.scrollTo(0, 10)
+    window.scrollTo(0, 0)
   }, [id, products, location.pathname, contextLoading, contextError])
 
   const handleQuantityChange = (type) => {

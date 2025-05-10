@@ -65,6 +65,7 @@ const ProductSearch = () => {
     };
 
     useEffect(() => {
+        window.scroll(0,0);
         setCurrentPage(1); // reset trang khi thay đổi filter
     }, [filterBy, value]);
 

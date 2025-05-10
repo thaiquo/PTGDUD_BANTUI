@@ -3,6 +3,7 @@ import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ProductContext } from '../context/ProductProvider';
 import logo from "/src/assets/Logo.jpg";
+import PageTransition from '../components/PageTransition';
 
 function Login() {
     const [username, setUsername] = useState('');
@@ -23,7 +24,8 @@ function Login() {
     };
 
     return (
-        <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-red-100 via-white to-pink-100">
+        <PageTransition>
+            <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-red-100 via-white to-pink-100">
             <div className="bg-white shadow-lg rounded-lg px-10 pt-10 pb-8 w-full max-w-md">
                 <div className="flex flex-col items-center mb-6">
                     <img src={logo} alt="Logo" className="h-16 w-40 object-contain" />
@@ -66,6 +68,7 @@ function Login() {
                 </form>
             </div>
         </div>
+        </PageTransition>
     );
 }
 export default Login;

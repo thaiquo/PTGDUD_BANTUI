@@ -228,7 +228,7 @@
 
 // export default Products;
 
-import React, { useContext, useState, useMemo } from 'react';
+import React, { useContext, useState, useMemo, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ProductContext } from '../context/ProductProvider';
 import Navbar from '../components/Navbar';
@@ -306,6 +306,10 @@ const Products = () => {
             setCurrentPage(page);
         }
     };
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, [currentPage, selectedFilters]);
+    
 
     if (loading) return <div>Đang tải sản phẩm...</div>;
     if (error) return <div>{error}</div>;
@@ -371,39 +375,62 @@ const Products = () => {
                     </div>
                 )}
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                    {currentProducts.map((product) => (
-                        <Link to={`/product/${product.id}`} key={product.id} className="border rounded-2xl p-4 hover:shadow-lg transition relative block">
-                            {/* Nếu sản phẩm đang sale, hiển thị nhãn SALE */}
-                            {product.trangThai === 0 && (
-                                <div className="absolute top-2 left-2 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded">SALE</div>
-                            )}
-                            <div className="flex justify-center items-center h-[180px] mb-4">
-                                <img
-                                    src={product.mauSac[0]?.hinhAnh[0]?.img}
-                                    alt={product.tenSanPham}
-                                    className="max-h-full max-w-full object-contain"
-                                />
-                            </div>
-                            <h3 className="text-lg font-semibold mb-2 overflow-hidden" style={{ display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden', height: '4.5em' }}>
-                                {product.tenSanPham}
-                            </h3>
-                            {/* Giá tiền */}
-                            <div className="flex justify-center gap-3 items-center mt-2">
-                                {product.trangThai === 0 ? (
-                                    <>
-                                        <span className="text-red-600 font-bold">
-                                            {(parsePrice(product.giaTien) * 0.9).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
-                                        </span>
-                                        <span className="text-gray-500 line-through">{product.giaTien}</span>
-                                    </>
-                                ) : (
-                                    <span className="text-red-600 font-bold">{product.giaTien}</span>
-                                )}
-                            </div>
-                        </Link>
-                    ))}
-                </div>
+<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+  {currentProducts.map((product) => (
+    <Link
+      to={`/product/${product.id}`}
+      key={product.id}
+      className="border rounded-xl p-4 hover:shadow-xl transition transform hover:-translate-y-2 relative block bg-white"
+    >
+      {/* Nhãn SALE */}
+      {product.trangThai === 0 && (
+        <div className="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-lg shadow-md">
+          SALE
+        </div>
+      )}
+
+      {/* Hình ảnh */}
+      <div className="flex justify-center items-center h-48 mb-4 rounded-lg overflow-hidden" id='hinhanh'>
+  <img
+    src={product.mauSac[0]?.hinhAnh[0]?.img || '/placeholder.jpg'}
+    alt={product.tenSanPham}
+    className="object-contain max-h-full max-w-full transition-transform hover:scale-110 duration-300"
+  />
+</div>
+
+      {/* Tên sản phẩm */}
+      <h3
+        className="text-base font-medium text-gray-800 mb-2 line-clamp-2"
+        style={{
+          display: '-webkit-box',
+          WebkitLineClamp: 2,
+          WebkitBoxOrient: 'vertical',
+        }}
+      >
+        {product.tenSanPham}
+      </h3>
+
+      {/* Giá tiền */}
+      <div className="flex justify-center gap-3 items-center mt-4">
+        {product.trangThai === 0 ? (
+          <>
+            <span className="text-red-500 font-bold text-lg">
+              {(parsePrice(product.giaTien) * 0.9).toLocaleString('vi-VN', {
+                style: 'currency',
+                currency: 'VND',
+              })}
+            </span>
+            <span className="text-gray-400 line-through text-sm">
+              {product.giaTien}
+            </span>
+          </>
+        ) : (
+          <span className="text-red-500 font-bold text-lg">{product.giaTien}</span>
+        )}
+      </div>
+    </Link>
+  ))}
+</div>
 
                 {/* Phân trang */}
                 <div className="flex justify-center mt-8 space-x-2">

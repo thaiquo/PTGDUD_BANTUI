@@ -1,4 +1,4 @@
-import React from 'react';
+import { useEffect } from 'react';
 import Navbar from "../components/Navbar";
 import PageTransition from "../components/PageTransition";
 import Footer from "../components/Footer";
@@ -36,6 +36,10 @@ const News = () => {
       link: 'https://kenh14.vn/4-mau-tui-xach-tien-loi-thoi-trang-ban-co-the-mang-di-choi-va-di-du-lich-20231113094749296.chn',
     },
   ];
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+  
 
   return (
     <PageTransition>

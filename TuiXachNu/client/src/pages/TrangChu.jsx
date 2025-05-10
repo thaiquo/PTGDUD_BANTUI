@@ -41,7 +41,7 @@ const TrangChu = () => {
         setTimeLeft({ hours: 0, minutes: 0, seconds: 0 });
       }
     };
-
+    window.scroll(0,0);
     updateCountdown();
     const interval = setInterval(updateCountdown, 1000);
     return () => clearInterval(interval);
