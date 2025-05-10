@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect } from 'react';
 import Navbar from "../components/Navbar";
 import PageTransition from "../components/PageTransition";
 import Footer from "../components/Footer";
@@ -39,7 +39,6 @@ const News = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
-
   return (
     <PageTransition>
       <Navbar />

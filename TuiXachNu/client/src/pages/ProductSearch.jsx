@@ -12,9 +12,13 @@ const ProductSearch = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 12;
 
-    const searchParams = new URLSearchParams(location.search);
-    const filterBy = searchParams.get("filterBy") || "tenSanPham";
-    const value = searchParams.get("value") || "";
+    const { filterBy, value } = useMemo(() => {
+        const searchParams = new URLSearchParams(location.search);
+        return {
+            filterBy: searchParams.get("filterBy") || "tenSanPham",
+            value: searchParams.get("value") || ""
+        };
+    }, [location.search]);    
 
     const parsePrice = (priceStr) => {
         if (!priceStr) return 0;
@@ -65,6 +69,7 @@ const ProductSearch = () => {
     };
 
     useEffect(() => {
+        window.scroll(0,0);
         setCurrentPage(1); // reset trang khi thay đổi filter
     }, [filterBy, value]);
 

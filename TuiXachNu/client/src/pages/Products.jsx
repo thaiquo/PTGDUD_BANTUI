@@ -80,7 +80,6 @@ const Products = () => {
         window.scrollTo(0, 0);
     }, [currentPage, selectedFilters]);
 
-
     if (loading) return <div>Đang tải sản phẩm...</div>;
     if (error) return <div>{error}</div>;
 
@@ -146,6 +145,7 @@ const Products = () => {
                 )}
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+
   {currentProducts.map((product) => (
     <Link
       to={`/product/${product.id}`}

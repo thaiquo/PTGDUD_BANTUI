@@ -5,6 +5,7 @@ import { useState, useEffect, useContext, useCallback } from "react" // Import u
 import { Link, useNavigate } from "react-router-dom"
 import Navbar from "../components/Navbar"
 import Footer from "../components/Footer"
+import PageTransition from "../components/PageTransition"
 import {
   TrashIcon,
   MinusIcon,
@@ -80,7 +81,6 @@ const Cart = () => {
 
   useEffect(() => {
     let isMounted = true
-
     loadCart()
       .then(() => {
         if (isMounted) {
@@ -130,26 +130,7 @@ const Cart = () => {
     }))
   }
 
-  // Handle quantity change
-  // const handleQuantityChange = async (idProduct, type) => {
-  //   const itemToUpdate = cartItems.find((item) => item.idProduct === idProduct)
-  //   if (itemToUpdate) {
-  //     const newQuantity = type === "increase" ? itemToUpdate.quantity + 1 : Math.max(1, itemToUpdate.quantity - 1)
 
-  //     setLoading(true)
-  //     try {
-  //       await updateCartQuantityContext(idProduct, newQuantity)
-  //       setCartItems((prev) =>
-  //         prev.map((item) => (item.idProduct === idProduct ? { ...item, quantity: newQuantity } : item)),
-  //       )
-  //     } catch (err) {
-  //       console.error("Error updating quantity:", err)
-  //       setError("Không thể cập nhật số lượng. Vui lòng thử lại.")
-  //     } finally {
-  //       setLoading(false)
-  //     }
-  //   }
-  // }
   const handleQuantityChange = async (idProduct, type) => {
   const itemIndex = cartItems.findIndex((item) => item.idProduct === idProduct);
 
@@ -181,7 +162,7 @@ const Cart = () => {
         const revertedCart = [...prev];
         revertedCart[itemIndex] = { ...itemToUpdate, isUpdating: false };
         return revertedCart;
-      });
+      }); 
     }
   }
 };
@@ -214,11 +195,13 @@ const Cart = () => {
   if (loading) {
     return (
       <>
-        <Navbar />
+       <PageTransition>
+       <Navbar />
         <div className="min-h-screen flex items-center justify-center">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-red-600" />
         </div>
         <Footer />
+       </PageTransition>
       </>
     )
   }
@@ -226,6 +209,7 @@ const Cart = () => {
   if (!currentUser) {
     return (
       <>
+        <PageTransition>
         <Navbar />
         <div className="min-h-screen flex flex-col items-center justify-center p-4">
           <div className="text-center py-12 bg-white rounded-lg shadow-sm max-w-md w-full">
@@ -238,6 +222,7 @@ const Cart = () => {
           </div>
         </div>
         <Footer />
+        </PageTransition>
       </>
     )
   }
@@ -245,6 +230,7 @@ const Cart = () => {
   if (error) {
     return (
       <>
+        <PageTransition>
         <Navbar />
         <div className="min-h-screen flex items-center justify-center p-4">
           <div className="text-center py-12 bg-white rounded-lg shadow-sm max-w-md w-full">
@@ -258,12 +244,14 @@ const Cart = () => {
           </div>
         </div>
         <Footer />
+        </PageTransition>
       </>
     )
   }
 
   return (
     <>
+      <PageTransition>
       <Navbar />
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="flex items-center gap-2 mb-6">
@@ -445,6 +433,7 @@ const Cart = () => {
         )}
       </div>
       <Footer />
+      </PageTransition>
     </>
   )
 }
