@@ -100,13 +100,14 @@ const Cart = () => {
 
   // Calculate total price of selected items
   const calculateTotal = () => {
-    return cartItems.reduce((total, item) => {
-      if (selectedItems[item.idProduct]) {
-        return total + item.giaTien * item.quantity
-      }
-      return total
-    }, 0)
-  }
+  return cartItems.reduce((total, item) => {
+    const price = parseFloat(item.giaTien) || 0; // Đảm bảo giá trị hợp lệ
+    if (selectedItems[item.idProduct]) {
+      return total + price * item.quantity;
+    }
+    return total;
+  }, 0);
+};
 
   // Format currency
   const formatCurrency = (amount) => {
