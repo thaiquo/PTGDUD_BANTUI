@@ -5,6 +5,7 @@ import { useContext, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import { ProductContext } from "../context/ProductProvider"
 import { ShoppingBagIcon, HomeIcon } from "@heroicons/react/24/outline" // Import HomeIcon
+import PageTransition from "./PageTransition"
 
 function UserProfile() {
     const { currentUser, logout } = useContext(ProductContext)
@@ -25,7 +26,8 @@ function UserProfile() {
     }
 
     return (
-        <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
+        <PageTransition>
+            <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
             <div className="bg-white rounded-lg shadow-md w-full max-w-md">
                 <div className="px-6 py-4 border-b border-gray-200">
                     <h2 className="text-2xl font-semibold text-gray-800">Thông Tin Người Dùng</h2>
@@ -89,6 +91,7 @@ function UserProfile() {
                 </div>
             </div>
         </div>
+        </PageTransition>
     )
 }
 

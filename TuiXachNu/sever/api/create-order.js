@@ -109,7 +109,7 @@ const createOrder = async (req, res) => {
     console.error("❌ Lỗi tạo đơn hàng:", err);
     return res.status(500).json({ error: "Lỗi ghi dữ liệu MongoDB: " + err.message });
   } finally {
-    await client.close(); // **QUAN TRỌNG: Đóng kết nối client**
+    // await client.close(); // **QUAN TRỌNG: Đóng kết nối client**
   }
 };
 

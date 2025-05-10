@@ -131,25 +131,60 @@ const Cart = () => {
   }
 
   // Handle quantity change
-  const handleQuantityChange = async (idProduct, type) => {
-    const itemToUpdate = cartItems.find((item) => item.idProduct === idProduct)
-    if (itemToUpdate) {
-      const newQuantity = type === "increase" ? itemToUpdate.quantity + 1 : Math.max(1, itemToUpdate.quantity - 1)
+  // const handleQuantityChange = async (idProduct, type) => {
+  //   const itemToUpdate = cartItems.find((item) => item.idProduct === idProduct)
+  //   if (itemToUpdate) {
+  //     const newQuantity = type === "increase" ? itemToUpdate.quantity + 1 : Math.max(1, itemToUpdate.quantity - 1)
 
-      setLoading(true)
-      try {
-        await updateCartQuantityContext(idProduct, newQuantity)
-        setCartItems((prev) =>
-          prev.map((item) => (item.idProduct === idProduct ? { ...item, quantity: newQuantity } : item)),
-        )
-      } catch (err) {
-        console.error("Error updating quantity:", err)
-        setError("Không thể cập nhật số lượng. Vui lòng thử lại.")
-      } finally {
-        setLoading(false)
-      }
+  //     setLoading(true)
+  //     try {
+  //       await updateCartQuantityContext(idProduct, newQuantity)
+  //       setCartItems((prev) =>
+  //         prev.map((item) => (item.idProduct === idProduct ? { ...item, quantity: newQuantity } : item)),
+  //       )
+  //     } catch (err) {
+  //       console.error("Error updating quantity:", err)
+  //       setError("Không thể cập nhật số lượng. Vui lòng thử lại.")
+  //     } finally {
+  //       setLoading(false)
+  //     }
+  //   }
+  // }
+  const handleQuantityChange = async (idProduct, type) => {
+  const itemIndex = cartItems.findIndex((item) => item.idProduct === idProduct);
+
+  if (itemIndex !== -1) {
+    const updatedCart = [...cartItems]; // Tạo copy của cartItems
+    const itemToUpdate = updatedCart[itemIndex];
+    const newQuantity = type === "increase" ? itemToUpdate.quantity + 1 : Math.max(1, itemToUpdate.quantity - 1);
+
+    // Cập nhật giao diện ngay lập tức
+    updatedCart[itemIndex] = { ...itemToUpdate, quantity: newQuantity, isUpdating: true };
+    setCartItems(updatedCart);
+
+    try {
+      // Gọi API để cập nhật trên server
+      await updateCartQuantityContext(idProduct, newQuantity);
+
+      // Xóa trạng thái cập nhật sau khi thành công
+      setCartItems((prev) => {
+        const updated = [...prev];
+        updated[itemIndex] = { ...updated[itemIndex], isUpdating: false };
+        return updated;
+      });
+    } catch (err) {
+      console.error("Error updating quantity:", err);
+      setError("Không thể cập nhật số lượng. Vui lòng thử lại.");
+
+      // Rollback nếu thất bại
+      setCartItems((prev) => {
+        const revertedCart = [...prev];
+        revertedCart[itemIndex] = { ...itemToUpdate, isUpdating: false };
+        return revertedCart;
+      });
     }
   }
+};
 
   // Handle remove item
   const handleRemoveItem = async (idProduct) => {
